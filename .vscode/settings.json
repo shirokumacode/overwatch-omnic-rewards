@@ -1,0 +1,5 @@
+{
+    "python.pythonPath": "/home/shiro/.local/share/virtualenvs/owlTokens-gf5_rp99/bin/python",
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true
+}

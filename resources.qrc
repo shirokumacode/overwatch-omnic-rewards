@@ -1,0 +1,9 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="icons">
+        <file alias="icondisabled.png">icons/icondisabled.png</file>
+        <file alias="iconowl.png">icons/iconowl.png</file>
+        <file alias="iconowc.png">icons/iconowc.png</file>
+        <file alias="iconerror.png">icons/iconerror.png</file>
+    </qresource>
+</RCC>
