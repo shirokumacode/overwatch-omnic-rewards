@@ -29,9 +29,9 @@ class StatsDialog(QDialog):
             f"<p>This Month"
         )
         stats_owl_text2 = (
-            f"<p>{self.stats_owl[0]} min - {round(self.stats_owl[0]/60, 2)}h - {int(self.stats_owl[0]/60/5)} tokens \n"
-            f"<p>{self.stats_owl[1]} min - {round(self.stats_owl[1]/60, 2)}h - {int(self.stats_owl[1]/60/5)} tokens \n"
-            f"<p>{self.stats_owl[2]} min - {round(self.stats_owl[2]/60, 2)}h - {int(self.stats_owl[2]/60/5)} tokens \n"
+            f"<p>{self.stats_owl[0]} min - {round(self.stats_owl[0]/60, 2)}h - {int(self.stats_owl[0]/60)*5} tokens \n"
+            f"<p>{self.stats_owl[1]} min - {round(self.stats_owl[1]/60, 2)}h - {int(self.stats_owl[1]/60)*5} tokens \n"
+            f"<p>{self.stats_owl[2]} min - {round(self.stats_owl[2]/60, 2)}h - {int(self.stats_owl[2]/60)*5} tokens \n"
         )
         stats_owc_text1 = (
             f"<p>Last 24h"
@@ -102,9 +102,9 @@ if __name__ == "__main__":
     icon_owl = QIcon(os.path.join("icons", "iconowl.png"))
     icon_owc = QIcon(os.path.join("icons", "iconowc.png"))
     fake_data = io.StringIO("Timestamp,Account,Type,Title,Minutes\n"
-                            "2021-07-01T10:22:12.588667+01:00,111111111,owl,FakeTitleOWL1,35\n"
-                            "2021-06-27T10:22:12.588667+01:00,111111111,owl,FakeTitleOWL2,15\n"
-                            "2021-06-15T19:22:12.588667+01:00,111111111,owl,FakeTitleOWL3,20\n"
+                            "2021-07-01T10:22:12.588667+01:00,111111111,owl,FakeTitleOWL1,65\n"
+                            "2021-06-27T10:22:12.588667+01:00,111111111,owl,FakeTitleOWL2,45\n"
+                            "2021-06-15T19:22:12.588667+01:00,111111111,owl,FakeTitleOWL3,45\n"
                             "2021-07-01T19:22:12.588667+01:00,111111111,owc,FakeTitleOWC1,35\n"
                             "2021-06-27T19:22:12.588667+01:00,111111111,owc,FakeTitleOWC2,15\n"
                             "2021-06-15T19:22:12.588667+01:00,111111111,owc,FakeTitleOWC3,20\n")
