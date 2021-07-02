@@ -2,6 +2,11 @@
 
 A **System Tray** app designed to **help** players **earn Overwatch League tokens** and **Contenders skins**. Cross-platform (Windows/Linux/MacOS). Created using Python and PyQt. 
 
+
+System Tray                |  Stats page
+:-------------------------:|:-------------------------:
+![](images/normal.png)  |  ![](images/stats.png)
+
 ## Features
 - Earn **OWL tokens and OWC skins** in the **background**
 - **No Login Required**
