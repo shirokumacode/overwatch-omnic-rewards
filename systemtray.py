@@ -30,6 +30,7 @@ class SystemTray(QSystemTrayIcon):
 
         self.config_location = os.path.join(application_path, 'config.json')
         self.history_location = os.path.join(application_path, 'history.csv')
+        logger.info(self.history_location)
 
         self.settings = {'owl': True, 'owc': True, 'min_check': 10}
         self.shutdown_flag = False
@@ -277,8 +278,7 @@ class SystemTray(QSystemTrayIcon):
                 history_data = csv.DictReader(history_file)
                 self.stats_dialog = StatsDialog(history_data, self.settings['account'], self.icon_owl, self.icon_owc)
                 self.stats_dialog.show()
-        self.stats_dialog.deleteLater()
-        logger.info("Show stats closed")
+        self.stats_dialog.finished.connect(self.stats_dialog.deleteLater)
 
     @pyqtSlot()
     def prepare_to_exit(self):
@@ -313,10 +313,10 @@ class SystemTray(QSystemTrayIcon):
     def write_watch_history(self, contenders, min_watched, title, accountid=None):
         logger.info("Writting history record")
         if os.path.isfile(self.history_location):
-            write_header = True 
+            write_header = False 
             write_mode = 'a'
         else:
-            write_header = False
+            write_header = True
             write_mode = 'w'
 
         contenders = 'owc' if contenders else 'owl'
