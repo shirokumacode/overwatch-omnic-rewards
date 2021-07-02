@@ -23,6 +23,7 @@ System Tray                |  Stats page
 - [Developing](#developing)
     - [Testing the app](#testing-the-app)
     - [Debugging the app](#debugging-the-app)
+    - [Building/package the app](#building/package-the-app)
 - [Common Problems/Additional Questions](#common-problems/additional-questions)
 - [Considerations](#considerations)
 
@@ -126,6 +127,13 @@ You can also set the logging level (info, warning, debug) with
 ```shell
 python gui.py -l <logging level>
 ```
+
+### Building/package the app
+Simply run PyInstaller
+```shell
+pyinstaller gui.py -n omnic_rewards --onefile 
+```
+
 
 Code/PR away and feel free to criticize my code. I would very much like to **get real advice** as it was my first time using PyQt.
 
