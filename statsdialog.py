@@ -10,6 +10,7 @@ class StatsDialog(QDialog):
         super().__init__(parent)
 
         self.setWindowTitle("Stats/History")
+        self.setWindowIcon(icon_owl)
         
         self.stats_owl = [0,0,0]
         self.stats_owc = [0,0,0]
