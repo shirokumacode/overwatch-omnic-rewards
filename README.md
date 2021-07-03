@@ -134,7 +134,10 @@ Simply run PyInstaller
 ```shell
 pyinstaller gui.py -n omnic_rewards --onefile 
 ```
-
+Windows build
+```shell
+pyinstaller gui.py -n omnic_rewards -w -i icons\iconowl.ico --onefile 
+```
 
 Code/PR away and feel free to criticize my code. I would very much like to **get real advice** as it was my first time using PyQt.
 
