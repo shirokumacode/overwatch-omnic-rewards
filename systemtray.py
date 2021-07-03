@@ -155,8 +155,7 @@ class SystemTray(QSystemTrayIcon):
         self.checknow_action.setEnabled(True)
         self.status_action.setText(f"Status: {error_msg}")
         if self.last_record:
-                contenders, title, min_watch, accountid = self.last_record
-                self.write_watch_history(contenders, title, min_watch, accountid)
+                self.write_last_record()
         if notification:
             self.showMessage("Error - OWL Omnic Rewards", f"{error_msg} \n Perform a check now or restart app", self.icon_error, 10000)
 
@@ -238,8 +237,7 @@ class SystemTray(QSystemTrayIcon):
                 self.thread.quit()
                 self.thread.wait()
             if self.last_record:
-                contenders, title, min_watch, accountid = self.last_record
-                self.write_watch_history(contenders, title, min_watch, accountid)
+                self.write_last_record()
             self.create_thread()
         account_dialog.deleteLater()
         logger.info("Closed Setting account")
@@ -285,8 +283,7 @@ class SystemTray(QSystemTrayIcon):
         logger.info("Preparing to exit")
         if self.thread: 
             if self.last_record:
-                contenders, title, min_watch, accountid = self.last_record
-                self.write_watch_history(contenders, title, min_watch, accountid)
+                self.write_last_record()
             self.exit_signal.emit(True)
             self.thread.quit()
             self.thread.wait()
@@ -309,6 +306,11 @@ class SystemTray(QSystemTrayIcon):
             self.settings[key] = value
         with open(self.config_location, 'w') as f:
             json.dump(self.settings, f, sort_keys=True, indent=4)
+    
+    def write_last_record(self):
+        contenders, title, min_watch, accountid = self.last_record
+        self.write_watch_history(contenders, min_watch, title, accountid)
+        self.last_record = ()
 
     def write_watch_history(self, contenders, min_watched, title, accountid=None):
         logger.info("Writting history record")
