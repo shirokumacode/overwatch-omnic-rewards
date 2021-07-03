@@ -130,7 +130,8 @@ class CheckViewer(QObject):
         except requests.exceptions.HTTPError as errh:
             logger.error(f"Watcher HTTP error - {errh.response.status_code}")
             self.error.emit(f"Watcher HTTP error - {errh.response.status_code}", True)
-            self.watcher_timer.stop()            
+            self.watcher_timer.stop()
+            self.start_check_timer(check=False)            
         except requests.exceptions.ConnectionError as errc:
             logger.error("Watcher ConnectionError")
             self.error.emit("Couldn't connect - Check internet", False)
@@ -140,14 +141,17 @@ class CheckViewer(QObject):
             logger.error(f"Watcher Requests error - {err}")
             self.error.emit("Unknown error (requests). Check Logs", True)
             self.watcher_timer.stop()
+            self.start_check_timer(check=False)
         except OwlApiBadCode as e:
             logger.error(f"Watcher Bad API Response - {e.response}")
             self.error.emit("Bad response from API. Check Logs", True)
             self.watcher_timer.stop()
+            self.start_check_timer(check=False)
         except Exception as e:
             logger.error(f"Watcher Exception - {e}")
             self.error.emit("Unknown error (watcher). Check Logs", True)
             self.watcher_timer.stop()
+            self.start_check_timer(check=False)
         else:
             if tracking_status:
                 if self.contenders:
