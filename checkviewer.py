@@ -99,7 +99,7 @@ class CheckViewer(QObject):
             self.check_timer.stop()
         except Exception as e:
             logger.error(f"Checker Exception - {e}")
-            self.error.emit("Page is not well formatted. Check Logs", True)
+            self.error.emit("OWL/OWC Page incorrectly formatted/error", True)
             self.check_timer.stop()
 
     def start_watching(self, video_player, contenders=False): 
