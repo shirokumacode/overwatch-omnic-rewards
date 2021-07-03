@@ -30,7 +30,7 @@ System Tray                |  Stats page
 
 ## Install
 
-I will be providing executables for Linux/Windows soon. Keep checking the releases section. MacOS users should check out the [How to run](#how-to-run) section to run the app.
+Check the [releases section](https://github.com/shirokumacode/overwatch-omnic-rewards/releases/) for Windows/Linux executables. MacOS users should check out the [How to run](#how-to-run) section to run the app.
 
 ## FAQ
 <details>
