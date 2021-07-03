@@ -172,7 +172,8 @@ That indicates a hard crash. Try to reproduce it and open a issue on Github so I
 <details>
 <summary>My PC didn't shutdown after the stream ended</summary>
 The app tries to shutdown the computer on the next false live check. Howewer keep in mind it's still in beta:
-- Linux: Depends on your distro having *systemmctl*
+
+- Linux: Depends on *systemctl*
 - Windows: Not tested but should work
 - MacOS: Can't test if the method used to shutdown works at all (open issue on Github if it doesn't)
 </details>
@@ -184,7 +185,7 @@ Open an issue on Github so I can try to fix it
 
 <details>
 <summary>Can I change the time between checks?</summary>
-You can via the config file (config.json) but you might get 0min watched warnings. Check the problem above. I feel 10min (default) is a good compromise.
+You can via the config file (config.json) but you might get 0min watched warnings. I feel 10min (default) is a good compromise.
 </details>
 
 <details>
@@ -200,6 +201,7 @@ The app creates a csv file with your watch history. Check the created file - his
 <details>
 <summary>Can I run this without the system tray icon?</summary>
 You can but it is not advisable. The argument -q or --quiet make the system tray not visible. You should enable it with the -v argument so you can get feedback of what is it doing
+
 ```shell
 python gui.py -q -v
 ```
