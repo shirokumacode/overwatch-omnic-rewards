@@ -69,8 +69,12 @@ You should check out the utils folder and the examples inside. Any python progra
 <details>
 <summary>Can you make this app run at startup/login/boot?</summary>
 You certainly can. Just download the executable follow the steps below
+
 - [Windows guide](https://support.microsoft.com/en-us/windows/add-an-app-to-run-automatically-at-startup-in-windows-10-150da165-dcd9-7230-517b-cf3c295d89dd)
-- Linux - depends on the distribution/DE exemple [KDE](https://userbase.kde.org/System_Settings/Autostart) [Arch](https://wiki.archlinux.org/title/autostarting#On_desktop_environment_startup)
+
+- Linux - depends on the distribution/DE
+    - [KDE](https://userbase.kde.org/System_Settings/Autostart)
+    - [Arch](https://wiki.archlinux.org/title/autostarting#On_desktop_environment_startup)
 </details>
 
 ## How to Run
