@@ -18,8 +18,8 @@ class SystemTray(QSystemTrayIcon):
     owc_flag_signal = pyqtSignal(bool)
     exit_signal = pyqtSignal(bool)
 
-    def __init__(self, quiet_mode=False):
-        super().__init__()
+    def __init__(self, quiet_mode=False, parent=None):
+        super().__init__(parent=parent)
         logger.info("Starting system tray")
 
         # PyInstaller fix for application path
@@ -281,9 +281,9 @@ class SystemTray(QSystemTrayIcon):
     @pyqtSlot()
     def prepare_to_exit(self):
         logger.info("Preparing to exit")
-        if self.thread: 
-            if self.last_record:
+        if self.last_record:
                 self.write_last_record()
+        if self.thread: 
             self.exit_signal.emit(True)
             self.thread.quit()
             self.thread.wait()

@@ -22,8 +22,9 @@ def main():
         set_local_urls()
 
     # Create the tray
-    tray = SystemTray(options.quiet)
+    tray = SystemTray(quiet_mode=options.quiet, parent=app)
     app.aboutToQuit.connect(tray.prepare_to_exit)
+    app.commitDataRequest.connect(tray.prepare_to_exit)
 
     app.exec_()
 
