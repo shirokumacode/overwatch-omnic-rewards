@@ -43,6 +43,10 @@ No logins, no passwords. It only needs your Blizzard user_id that you can obtain
 <details>
 <summary>Does it work?</summary>
 It does. I've tested the mechanism for the past month. I haven't open the OWL/OWC website so far and earned all the tokens and June OWC skins.
+
+This mechanism was already found and implemented before (with minor differences). See these repositories:
+- [cyandterry/OWL-Token](https://github.com/cyandterry/OWL-Token)
+- [TrebuchKill/owl-token-guide](https://github.com/TrebuchKill/owl-token-guide)
 </details>
 
 <details>
@@ -68,7 +72,6 @@ You should check out the utils folder and the examples inside. Any python progra
 You certainly can. Just download the executable follow the steps below
 
 - [Windows guide](https://support.microsoft.com/en-us/windows/add-an-app-to-run-automatically-at-startup-in-windows-10-150da165-dcd9-7230-517b-cf3c295d89dd)
-
 - Linux - depends on the distribution/DE
     - [KDE](https://userbase.kde.org/System_Settings/Autostart)
     - [Arch](https://wiki.archlinux.org/title/autostarting#On_desktop_environment_startup)
