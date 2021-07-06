@@ -10,10 +10,7 @@ A **System Tray** app designed to **help** players **earn Overwatch League token
 - **Stats** - Show Hours watched/tokens earned (also csv file)
 - Can **Shutdown computer** after stream ended 
 
-
-System Tray                |  Stats page
-:-------------------------:|:-------------------------:
-![](images/normal.png)  |  ![](images/stats.png)
+![](images/merged.png)
 
 
 ## Table of Contents
