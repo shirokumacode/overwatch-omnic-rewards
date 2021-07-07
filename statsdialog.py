@@ -17,54 +17,49 @@ class StatsDialog(QDialog):
 
         self.process_file(history_data, account_id)
 
-        outer_layout = QVBoxLayout()
-
         label_owl = QLabel("<h3>Overwatch League</h3>")
         label_owl.setPixmap(icon_owl.pixmap(50,50))
         label_owc = QLabel("<h3>Overwatch Contenders</h3>")
         label_owc.setPixmap(icon_owc.pixmap(50,50))
 
-        stats_owl_text1 = (
-            f"<p>Last 24h"
-            f"<p>Last 7d"
-            f"<p>This Month"
-        )
-        stats_owl_text2 = (
-            f"<p>{self.stats_owl[0]} min - {round(self.stats_owl[0]/60, 2)}h - {int(self.stats_owl[0]/60)*5} tokens \n"
-            f"<p>{self.stats_owl[1]} min - {round(self.stats_owl[1]/60, 2)}h - {int(self.stats_owl[1]/60)*5} tokens \n"
-            f"<p>{self.stats_owl[2]} min - {round(self.stats_owl[2]/60, 2)}h - {int(self.stats_owl[2]/60)*5} tokens \n"
-        )
-        stats_owc_text1 = (
-            f"<p>Last 24h"
-            f"<p>Last 7d"
-            f"<p>This Month"
-        )
-        stats_owc_text2 = (
-            f"<p>{self.stats_owc[0]} min - {round(self.stats_owc[0]/60, 2)}h\n"
-            f"<p>{self.stats_owc[1]} min - {round(self.stats_owc[1]/60, 2)}h\n"
-            f"<p>{self.stats_owc[2]} min - {round(self.stats_owc[2]/60, 2)}h\n"
-        )
-
         btn_box = QDialogButtonBox(QDialogButtonBox.Cancel)
         btn_box.rejected.connect(self.reject)
 
-        innerlayout1 = QHBoxLayout()
-        innerlayout1.addWidget(label_owl, alignment=Qt.AlignCenter)
-        innerlayout1.addWidget(QLabel(stats_owl_text1))
-        innerlayout1.addWidget(QLabel(stats_owl_text2))
-        innerlayout2 = QHBoxLayout()
-        innerlayout2.addWidget(label_owc, alignment=Qt.AlignCenter)
-        innerlayout2.addWidget(QLabel(stats_owc_text1))
-        innerlayout2.addWidget(QLabel(stats_owc_text2))
+        inner_layout = QGridLayout()
+
+        inner_layout.addWidget(label_owl, 0, 0, 3, 1)
+        inner_layout.addWidget(QLabel("Last 24h"), 0, 1)
+        inner_layout.addWidget(QLabel("Last 7d"), 1, 1)
+        inner_layout.addWidget(QLabel("This month"), 2, 1)
+        inner_layout.addWidget(QLabel(str(self.stats_owl[0]) + " min"), 0, 2)
+        inner_layout.addWidget(QLabel(str(self.stats_owl[1]) + " min"), 1, 2)
+        inner_layout.addWidget(QLabel(str(self.stats_owl[2]) + " min"), 2, 2)
+        inner_layout.addWidget(QLabel(str(round(self.stats_owl[0]/60, 2)) + "h"), 0, 3)
+        inner_layout.addWidget(QLabel(str(round(self.stats_owl[1]/60, 2)) + "h"), 1, 3)
+        inner_layout.addWidget(QLabel(str(round(self.stats_owl[2]/60, 2)) + "h"), 2, 3)
+        inner_layout.addWidget(QLabel(str(int(self.stats_owl[0]/60)*5) + " tokens"), 0, 4)
+        inner_layout.addWidget(QLabel(str(int(self.stats_owl[1]/60)*5) + " tokens"), 1, 4)
+        inner_layout.addWidget(QLabel(str(int(self.stats_owl[2]/60)*5) + " tokens"), 2, 4)
+        
         line = QFrame()
         line.setFrameShape(QFrame.HLine)
         line.setLineWidth(3)
+        inner_layout.addWidget(line, 3, 0, 2, 5)
 
-        outer_layout.addLayout(innerlayout1)
-        outer_layout.addWidget(line)
-        outer_layout.addLayout(innerlayout2)
+        inner_layout.addWidget(label_owc, 5, 0, 3, 1)
+        inner_layout.addWidget(QLabel("Last 24h"), 5, 1)
+        inner_layout.addWidget(QLabel("Last 7d"), 6, 1)
+        inner_layout.addWidget(QLabel("This month"), 7, 1)
+        inner_layout.addWidget(QLabel(str(self.stats_owc[0]) + " min"), 5, 2)
+        inner_layout.addWidget(QLabel(str(self.stats_owc[1]) + " min"), 6, 2)
+        inner_layout.addWidget(QLabel(str(self.stats_owc[2]) + " min"), 7, 2)
+        inner_layout.addWidget(QLabel(str(round(self.stats_owc[0]/60, 2)) + "h"), 5, 3)
+        inner_layout.addWidget(QLabel(str(round(self.stats_owc[1]/60, 2)) + "h"), 6, 3)
+        inner_layout.addWidget(QLabel(str(round(self.stats_owc[2]/60, 2)) + "h"), 7, 3)
+
+        outer_layout = QVBoxLayout()
+        outer_layout.addLayout(inner_layout)
         outer_layout.addWidget(btn_box)
-
         outer_layout.setSpacing(20)
 
         self.setLayout(outer_layout)
