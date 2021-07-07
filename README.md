@@ -135,12 +135,13 @@ python gui.py -l <logging level>
 
 ### Building/package the app
 Simply run PyInstaller
+- Linux build
 ```shell
-pyinstaller gui.py -n omnic_rewards --onefile 
+pyinstaller gui.py -n omnic_rewards_Linux --onefile 
 ```
-Windows build
+- Windows build
 ```shell
-pyinstaller gui.py -n omnic_rewards -w -i icons\iconowl.ico --onefile 
+pyinstaller gui.py -n omnic_rewards_Windows -w -i icons\iconowl.ico --onefile 
 ```
 
 Code/PR away and feel free to criticize my code. I would very much like to **get real advice** as it was my first time using PyQt.
