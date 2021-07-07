@@ -21,8 +21,8 @@ A **System Tray** app designed to **help** players **earn Overwatch League token
 - [Developing](#developing)
     - [Testing the app](#testing-the-app)
     - [Debugging the app](#debugging-the-app)
-    - [Building/package the app](#building/package-the-app)
-- [Common Problems/Additional Questions](#common-problems/additional-questions)
+    - [Building/package the app](#buildingpackage-the-app)
+- [Common Problems/Additional Questions](#common-problemsadditional-questions)
 - [Considerations](#considerations)
 
 ## Install
