@@ -276,6 +276,8 @@ class SystemTray(QSystemTrayIcon):
                 history_data = csv.DictReader(history_file)
                 self.stats_dialog = StatsDialog(history_data, self.settings['account'], self.icon_owl, self.icon_owc)
                 self.stats_dialog.show()
+                self.stats_dialog.raise_()
+                self.stats_dialog.activateWindow()
         self.stats_dialog.finished.connect(self.stats_dialog.deleteLater)
 
     @pyqtSlot()
