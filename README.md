@@ -23,7 +23,6 @@ A **System Tray** app designed to **help** players **earn Overwatch League token
     - [Debugging the app](#debugging-the-app)
     - [Building/package the app](#buildingpackage-the-app)
 - [Common Problems/Additional Questions](#common-problemsadditional-questions)
-- [Considerations](#considerations)
 
 ## Install
 
@@ -51,7 +50,7 @@ This mechanism was already found and implemented before (with minor differences)
 
 <details>
 <summary>Is it more reliable than the website?</summary>
-It is as you don't rely on the youtube player status (playing/not playing) to track. Also you can have adblockers blocking the necessary tracking endpoints. Hovewer I can't guarantee the OWL tracking endpoints are working at 100%. You can use both this app and the website if you want to make sure 100%.
+It is as you don't rely on the youtube player status (playing/not playing) to track. Also you can have adblockers blocking the necessary tracking endpoints. Hovewer I can't guarantee the OWL tracking endpoints are stable (sometimes they go down). 
 </details>
 
 <details>
@@ -84,7 +83,7 @@ Run the executables from the releases section
 OR
 
 1. Clone the repository 
-2. Install Python and then pipenv
+2. Install Python (3.9 recommended) and then pipenv
 ```shell
 pip install pipenv
 ```
