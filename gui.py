@@ -36,7 +36,7 @@ def create_arg_parser():
     parser.add_argument("-q", "--quiet", help="Quiet mode. No system tray", action="store_true")
     parser.add_argument("-d", "--debug", help="Debug Mode. Switches URL's endpoints to local ones for testing. See docs", action="store_true")
     
-    options = parser.parse_args()
+    options, qt_args = parser.parse_known_args()
 
     levels = {
     'critical': logging.CRITICAL,
