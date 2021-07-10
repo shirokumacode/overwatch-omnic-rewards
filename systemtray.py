@@ -169,7 +169,12 @@ class SystemTray(QSystemTrayIcon):
             self.status_action.setText(f"Status: Not Live - {min_remaining}min until next check")
             self.checknow_action.setEnabled(True)
             if self.shutdown_flag and min_remaining == self.settings['min_check']:
-                self.shutdown_computer()
+                if self.shutdown_action.isChecked():
+                    logger.info("Shutdown in 30s")
+                    self.showMessage("Shutdown in 30s", "Not Live. Will try to shutdown in 30s. Uncheck the option to cancel", self.icon_owl, 30000)
+                    QTimer.singleShot(30000, self.shutdown_computer)
+                else:
+                     self.shutdown_flag = False
         else:
             logger.info("Checking OWL/OWC page")
             self.status_action.setText("Status: Checking OWL/OWC page")
@@ -253,14 +258,18 @@ class SystemTray(QSystemTrayIcon):
         self.owc_flag_signal.emit(checked)
 
     def shutdown_computer(self):
-        logger.info("Shutting down computer")
-        system = platform.system()
-        if system == 'Linux':
-            os.system("systemctl poweroff") 
-        elif system == 'Windows':
-            os.system("shutdown /s /f /t 30")
-        elif system == 'Darwin':
-            os.system("osascript -e tell app \"Finder\" to shut down")
+        if self.shutdown_action.isChecked():
+            logger.info("Shutting down computer")
+            system = platform.system()
+            if system == 'Linux':
+                os.system("systemctl poweroff") 
+            elif system == 'Windows':
+                os.system("shutdown /s /f /t 30")
+            elif system == 'Darwin':
+                os.system("osascript -e tell app \"Finder\" to shut down")
+        else:
+            logger.info("Shutdown was canceled")
+            self.shutdown_flag = False
 
     @pyqtSlot()
     def show_stats(self):

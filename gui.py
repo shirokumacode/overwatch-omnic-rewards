@@ -3,6 +3,9 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 import sys, argparse, logging
 
+import logging
+logger = logging.getLogger(__name__)
+
 from systemtray import SystemTray
 
 def main():
@@ -60,6 +63,7 @@ def create_arg_parser():
     return options
 
 def set_local_urls():
+    logger.info("Using Local endpoints")
     import utils.checker as checker
     from utils.viewer import Viewer
     checker.OWL_URL = "http://127.0.0.1:5000/owlpage"
