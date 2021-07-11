@@ -10,9 +10,9 @@ from systemtray import SystemTray
 
 def main():
 
-    options = create_arg_parser()
+    options, qt_args = create_arg_parser()
     
-    app = QApplication(sys.argv)
+    app = QApplication(sys.argv[:1] + qt_args)
     app.setApplicationName("Overwatch Omnic Rewards")
 
     if not QSystemTrayIcon.isSystemTrayAvailable():
@@ -60,7 +60,7 @@ def create_arg_parser():
 
     logging.basicConfig(stream=sys.stdout, level=level)
     
-    return options
+    return options, qt_args
 
 def set_local_urls():
     logger.info("Using Local endpoints")
