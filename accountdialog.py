@@ -48,6 +48,8 @@ class AccountDialog(QDialog):
         outer_layout.setSpacing(20)
 
         self.setLayout(outer_layout)
+
+        self.setFixedSize(self.sizeHint())
         
 
     def processValue(self):

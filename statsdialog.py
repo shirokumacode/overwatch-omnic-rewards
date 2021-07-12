@@ -63,6 +63,8 @@ class StatsDialog(QDialog):
         outer_layout.setSpacing(20)
 
         self.setLayout(outer_layout)
+
+        self.setFixedSize(self.sizeHint())
         
     def process_file(self, history_data, accountid):
         range_day = datetime.now().astimezone()-timedelta(hours=24)
