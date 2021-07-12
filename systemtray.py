@@ -234,7 +234,7 @@ class SystemTray(QSystemTrayIcon):
     @pyqtSlot()
     def account_setup(self):
         logger.info("Open setting account")
-        account_dialog = AccountDialog()
+        account_dialog = AccountDialog(self.icon_owl)
         if account_dialog.exec_():
             logger.info("Setting account id")
             self.set_write_settings(key='account', value=account_dialog.get_userid())

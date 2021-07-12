@@ -4,8 +4,10 @@ from PyQt5.QtCore import *
 
 class AccountDialog(QDialog):
 
-    def __init__(self, parent=None):
+    def __init__(self, icon, parent=None):
         super().__init__(parent)
+
+        self.setWindowIcon(icon)
 
         self.userID = ""
 
@@ -57,8 +59,10 @@ class AccountDialog(QDialog):
 
 
 if __name__ == "__main__":
+    import os
     app = QApplication([])
-    dialog = AccountDialog()
+    icon_owl = QIcon(os.path.join("icons", "iconowl.png"))
+    dialog = AccountDialog(icon_owl)
     dialog.exec_()
     print(dialog.get_userid())
     
