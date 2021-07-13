@@ -36,6 +36,7 @@ def create_arg_parser():
     group = parser.add_mutually_exclusive_group()
     group.add_argument("-v", "--verbose", help="Increase output verbosity", action="store_true")
     group.add_argument("-l", "--log", default="warning", help=("Provide logging level. \n Example --log debug', default='warning'"))
+    parser.add_argument("-fl", "--file-log", help="Writes the logs to a provided filename")
     parser.add_argument("-q", "--quiet", help="Quiet mode. No system tray", action="store_true")
     parser.add_argument("-d", "--debug", help="Debug Mode. Switches URL's endpoints to local ones for testing. See docs", action="store_true")
     
@@ -58,7 +59,17 @@ def create_arg_parser():
             f"log level given: {options.log}"
             f" -- must be one of: {' | '.join(levels.keys())}")
 
-    logging.basicConfig(stream=sys.stdout, level=level)
+    log_handlers = []
+    
+    stream_handler = logging.StreamHandler(sys.stdout)
+    log_handlers.append(stream_handler)
+
+    if options.file_log:
+        file_handler = logging.FileHandler(options.file_log)
+        file_handler.setFormatter(logging.Formatter("[%(asctime)s]" + logging.BASIC_FORMAT))
+        log_handlers.append(file_handler)
+        
+    logging.basicConfig(handlers=log_handlers, level=level)
     
     return options, qt_args
 

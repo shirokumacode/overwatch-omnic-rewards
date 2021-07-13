@@ -30,7 +30,6 @@ class SystemTray(QSystemTrayIcon):
 
         self.config_location = os.path.join(application_path, 'config.json')
         self.history_location = os.path.join(application_path, 'history.csv')
-        logger.info(self.history_location)
 
         self.settings = {'account': '', 'owl': True, 'owc': True, 'min_check': 10}
         self.shutdown_flag = False
@@ -186,9 +185,9 @@ class SystemTray(QSystemTrayIcon):
             self.showMessage("Watching Overwatch League", title, self.icon_owl, 10000)
             self.checknow_action.setEnabled(False)
             logger.info("Started watching OWL")
-        self.status_action.setText(f"Status: Watching OWL for {min_watching}min")
-        logger.info(f"Watching OWL for {min_watching}min")
         if not end:
+            self.status_action.setText(f"Status: Watching OWL for {min_watching}min")
+            logger.info(f"Watching OWL for {min_watching}min")
             self.last_record = (False, title, min_watching, self.settings['account'])
         else:
             self.last_record = ()
@@ -208,9 +207,9 @@ class SystemTray(QSystemTrayIcon):
             self.showMessage("Watching Overwatch Contenders", title, self.icon_owc, 10000)
             self.checknow_action.setEnabled(False)
             logger.info("Started watching OWC")
-        self.status_action.setText(f"Status: Watching OWC for {min_watching}min")
-        logger.info(f"Watching OWC for {min_watching}min")
         if not end:
+            self.status_action.setText(f"Status: Watching OWC for {min_watching}min")
+            logger.info(f"Watching OWC for {min_watching}min")
             self.last_record = (True, title, min_watching, self.settings['account'])
         else:
             self.last_record = ()
