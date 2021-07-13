@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-import sys, argparse, logging
+import sys, argparse, logging, os
 
 import logging
 logger = logging.getLogger(__name__)
@@ -65,7 +65,12 @@ def create_arg_parser():
     log_handlers.append(stream_handler)
 
     if options.file_log:
-        file_handler = logging.FileHandler(options.file_log)
+        # PyInstaller fix for application path
+        if getattr(sys, 'frozen', False):
+            application_path = os.path.dirname(sys.executable)
+        elif __file__:
+            application_path = os.path.dirname(__file__)
+        file_handler = logging.FileHandler(os.path.join(application_path, options.file_log))
         file_handler.setFormatter(logging.Formatter("[%(asctime)s]" + logging.BASIC_FORMAT))
         log_handlers.append(file_handler)
         
