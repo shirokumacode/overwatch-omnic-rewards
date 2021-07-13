@@ -32,7 +32,7 @@ class SystemTray(QSystemTrayIcon):
         self.history_location = os.path.join(application_path, 'history.csv')
         logger.info(self.history_location)
 
-        self.settings = {'owl': True, 'owc': True, 'min_check': 10}
+        self.settings = {'account': '', 'owl': True, 'owc': True, 'min_check': 10}
         self.shutdown_flag = False
         self.last_record = ()
         self.load_settings()
@@ -275,14 +275,14 @@ class SystemTray(QSystemTrayIcon):
     def show_stats(self):
         logger.info("Show stats")
         if not os.path.isfile(self.history_location):
-            logger.info("No history file")
+            logger.warning("No history file")
             history_data = {}
             self.stats_dialog = StatsDialog(history_data, self.settings['account'], self.icon_owl, self.icon_owc)
             self.stats_dialog.show()
         else:
             with open(self.history_location, 'r', newline='') as history_file:
-                logger.info("Loaded history file")
                 history_data = csv.DictReader(history_file)
+                logger.info("Loaded history file")
                 self.stats_dialog = StatsDialog(history_data, self.settings['account'], self.icon_owl, self.icon_owc)
                 self.stats_dialog.show()
                 self.stats_dialog.raise_()
@@ -308,7 +308,7 @@ class SystemTray(QSystemTrayIcon):
             try:
                 self.settings.update(json.load(f))
             except Exception as e:
-                logger.error(e)
+                logger.error("Error loading settings file - " + str(e))
         logger.info("Settings loaded")
     
     def set_write_settings(self, key=None, value=None):
