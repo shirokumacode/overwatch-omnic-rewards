@@ -133,6 +133,7 @@ class CheckViewer(QObject):
             logger.error("Watcher Timeout error")
             self.error.emit("Watcher timeout'ed", False)
             self.viewer.restart_session()
+            self.viewer.time_viewer = 0
         except requests.exceptions.HTTPError as errh:
             logger.error(f"Watcher HTTP error - {errh.response.status_code}")
             self.error.emit(f"Watcher HTTP error - {errh.response.status_code}", True)
