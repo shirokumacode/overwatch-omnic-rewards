@@ -12,6 +12,9 @@ class Viewer():
     TRACKING_OWL = "https://wzavfvwgfk.execute-api.us-east-2.amazonaws.com/production/v2/sentinel-tracking/owl"
     TRACKING_OWC = "https://wzavfvwgfk.execute-api.us-east-2.amazonaws.com/production/v2/sentinel-tracking/contenders"
 
+    CONNECT_TIMEOUT = 4 
+    READ_TIMEOUT = 5
+
     USER_AGENTS = [
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0',
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 11.3; rv:89.0) Gecko/20100101 Firefox/89.0',
@@ -83,7 +86,7 @@ class Viewer():
             'Access-Control-Request-Headers': 'content-type,x-origin'
         }
 
-        response = self.session.options(self.url, headers=headers)
+        response = self.session.options(self.url, headers=headers, timeout=(self.CONNECT_TIMEOUT,self.READ_TIMEOUT))
         return response
 
     def __send_post_packet(self):
@@ -102,7 +105,7 @@ class Viewer():
             "locale": "en-us"
             }
 
-        response = self.session.post(self.url, headers=headers, data=json.dumps(data))
+        response = self.session.post(self.url, headers=headers, data=json.dumps(data), timeout=(self.CONNECT_TIMEOUT,self.READ_TIMEOUT))
         return response
 
 

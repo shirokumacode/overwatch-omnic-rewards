@@ -7,6 +7,9 @@ from lxml import html
 OWL_URL = "https://overwatchleague.com/en-us/"
 OWC_URL = "https://overwatchleague.com/en-us/contenders"
 
+CONNECT_TIMEOUT = 4 
+READ_TIMEOUT = 5
+
 def check_page_islive(contenders = False):
     # Select correct url
     url = OWL_URL
@@ -14,7 +17,7 @@ def check_page_islive(contenders = False):
         url = OWC_URL
 
     # Get Request
-    r = requests.get(url)
+    r = requests.get(url, timeout=(CONNECT_TIMEOUT,READ_TIMEOUT))
     r.raise_for_status()
 
     # Parse response
