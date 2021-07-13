@@ -132,6 +132,10 @@ You can also set the logging level (info, warning, debug) with
 python gui.py -l <logging level>
 ```
 
+If you need to get the logs in a file format with a timestamp use (_\<filename\>_ is optional, defaults to _omnic.log_)
+```shell
+python gui.py --file-log <filename>
+```
 ### Building/package the app
 Simply run PyInstaller
 - Linux build
