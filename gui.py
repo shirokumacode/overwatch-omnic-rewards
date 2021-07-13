@@ -35,8 +35,8 @@ def create_arg_parser():
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group()
     group.add_argument("-v", "--verbose", help="Increase output verbosity", action="store_true")
-    group.add_argument("-l", "--log", default="warning", help=("Provide logging level. \n Example --log debug', default='warning'"))
-    parser.add_argument("-fl", "--file-log", help="Writes the logs to a provided filename")
+    group.add_argument("-l", "--log", default="warning", help="Provide logging level")
+    parser.add_argument("-fl", "--file-log", nargs='?', const="omnic.log", help="Writes logs to a file. Will write to 'omnic.log' when no filename is provided")
     parser.add_argument("-q", "--quiet", help="Quiet mode. No system tray", action="store_true")
     parser.add_argument("-d", "--debug", help="Debug Mode. Switches URL's endpoints to local ones for testing. See docs", action="store_true")
     
@@ -60,7 +60,7 @@ def create_arg_parser():
             f" -- must be one of: {' | '.join(levels.keys())}")
 
     log_handlers = []
-    
+
     stream_handler = logging.StreamHandler(sys.stdout)
     log_handlers.append(stream_handler)
 
