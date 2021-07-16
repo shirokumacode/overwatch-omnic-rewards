@@ -42,7 +42,7 @@ class SystemTray(QSystemTrayIcon):
         QApplication.instance().setWindowIcon(self.icon_owl)
 
         self.create_menu()
-        #self.activated.connect(lambda: self.contextMenu().popup((QCursor.pos())))
+        self.activated.connect(self.click_systray)
 
         if not quiet_mode:
             self.setVisible(True)
@@ -54,6 +54,14 @@ class SystemTray(QSystemTrayIcon):
             logger.error("Account not set")
             self.status_action.setText(f"Status: No account setup")
             self.showMessage("Account Not Set", "Setup an account to begin watching", self.icon_error, 5000)
+
+    def click_systray(self, reason):
+        if reason == QSystemTrayIcon.Trigger:
+            self.contextMenu().popup((QCursor.pos()))
+        elif reason == QSystemTrayIcon.MiddleClick:
+            # TODO Open Stream URL (Youtube or OWL/OWC) 
+            # QDesktopServices.openUrl()
+            pass
 
     def create_icons(self):    
         # Create the icons
