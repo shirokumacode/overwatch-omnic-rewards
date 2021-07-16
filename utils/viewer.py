@@ -12,8 +12,8 @@ class Viewer():
     TRACKING_OWL = "https://wzavfvwgfk.execute-api.us-east-2.amazonaws.com/production/v2/sentinel-tracking/owl"
     TRACKING_OWC = "https://wzavfvwgfk.execute-api.us-east-2.amazonaws.com/production/v2/sentinel-tracking/contenders"
 
-    CONNECT_TIMEOUT = 4 
-    READ_TIMEOUT = 5
+    CONNECT_TIMEOUT = 5  
+    READ_TIMEOUT = 10
 
     USER_AGENTS = [
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0',

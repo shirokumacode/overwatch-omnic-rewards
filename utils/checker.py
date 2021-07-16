@@ -7,8 +7,8 @@ from lxml import html
 OWL_URL = "https://overwatchleague.com/en-us/"
 OWC_URL = "https://overwatchleague.com/en-us/contenders"
 
-CONNECT_TIMEOUT = 4 
-READ_TIMEOUT = 5
+CONNECT_TIMEOUT = 5 
+READ_TIMEOUT = 10
 
 def check_page_islive(contenders = False):
     # Select correct url
