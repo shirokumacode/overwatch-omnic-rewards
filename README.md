@@ -1,6 +1,6 @@
 # Overwatch Omnic Rewards
 
-A **System Tray** app designed to **help** players **earn Overwatch League tokens** and **Contenders skins**. Cross-platform (Windows/Linux/MacOS). Created using Python and PyQt. 
+A **System Tray** app designed to **help** players **earn Overwatch League tokens** and **Contenders skins**. Cross-platform (Windows/Linux/MacOS). Created using Python and PyQt5. 
 
 ## Features
 - Earn **OWL tokens and OWC skins** in the **background**
