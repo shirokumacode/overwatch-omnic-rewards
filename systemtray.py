@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 from checkviewer import CheckViewer
 from accountdialog import AccountDialog
 from statsdialog import StatsDialog
+from settings import Settings
 
 import resources_qc
 
@@ -31,10 +32,9 @@ class SystemTray(QSystemTrayIcon):
         self.config_location = os.path.join(application_path, 'config.json')
         self.history_location = os.path.join(application_path, 'history.csv')
 
-        self.settings = {'account': '', 'owl': True, 'owc': True, 'min_check': 10}
+        self.settings = Settings(self.config_location)
         self.shutdown_flag = False
         self.last_record = ()
-        self.load_settings()
         self.thread = None
 
         self.create_icons()
@@ -84,14 +84,12 @@ class SystemTray(QSystemTrayIcon):
         self.owl_checker_action = QAction("OWL")
         self.owl_checker_action.setVisible(False)
         self.owl_checker_action.setCheckable(True)
-        if owl_flag := self.settings.get("owl"):
-            self.owl_checker_action.setChecked(owl_flag)
+        self.owl_checker_action.setChecked(self.settings.get('owl', default=True))
 
         self.owc_checker_action = QAction("OWC")
         self.owc_checker_action.setCheckable(True)
         self.owc_checker_action.setVisible(False)
-        if owc_flag := self.settings.get("owc"):
-            self.owc_checker_action.setChecked(owc_flag)
+        self.owc_checker_action.setChecked(self.settings.get('owc', default=True))
 
         self.shutdown_action = QAction("Shutdown after end (Beta)")
         self.shutdown_action.setCheckable(True)
@@ -123,15 +121,16 @@ class SystemTray(QSystemTrayIcon):
 
     def create_thread(self):
         logger.info("Creating thread")
-        self.account_action.setText(f"Account: {self.settings['account']}")
+        self.account_action.setText(f"Account: {self.settings.get('account')}")
 
         self.thread = QThread()
 
         self.check_viewer = CheckViewer(
-                                self.settings['account'], 
-                                owl_flag=self.settings['owl'], 
-                                owc_flag=self.settings['owc'], 
-                                min_check=self.settings['min_check'])
+                                self.settings.get('account'), 
+                                owl_flag=self.settings.get('owl'), 
+                                owc_flag=self.settings.get('owc'), 
+                                min_check=self.settings.get('min_check')
+        )
         self.check_viewer.moveToThread(self.thread)
 
         self.thread.started.connect(self.check_viewer.run)
@@ -175,7 +174,7 @@ class SystemTray(QSystemTrayIcon):
             logger.info(f"Not Live - {min_remaining}min until next check")
             self.status_action.setText(f"Status: Not Live - {min_remaining}min until next check")
             self.checknow_action.setEnabled(True)
-            if self.shutdown_flag and min_remaining == self.settings['min_check']:
+            if self.shutdown_flag and min_remaining == self.settings.get('min_check'):
                 if self.shutdown_action.isChecked():
                     logger.info("Shutdown in 30s")
                     self.showMessage("Shutdown in 30s", "Not Live. Will try to shutdown in 30s. Uncheck the option to cancel", self.icon_owl, 30000)
@@ -196,7 +195,7 @@ class SystemTray(QSystemTrayIcon):
         if not end:
             self.status_action.setText(f"Status: Watching OWL for {min_watching}min")
             logger.info(f"Watching OWL for {min_watching}min")
-            self.last_record = (False, title, min_watching, self.settings['account'])
+            self.last_record = (False, title, min_watching, self.settings.get('account'))
         else:
             self.last_record = ()
             self.showMessage("Watched Overwatch League", f"Watched {min_watching}mins of {title}", self.icon_owl, 10000)
@@ -218,7 +217,7 @@ class SystemTray(QSystemTrayIcon):
         if not end:
             self.status_action.setText(f"Status: Watching OWC for {min_watching}min")
             logger.info(f"Watching OWC for {min_watching}min")
-            self.last_record = (True, title, min_watching, self.settings['account'])
+            self.last_record = (True, title, min_watching, self.settings.get('account'))
         else:
             self.last_record = ()
             self.showMessage("Watched Overwatch Contenders", f"Watched {min_watching}mins of {title}", self.icon_owc, 10000)
@@ -244,7 +243,7 @@ class SystemTray(QSystemTrayIcon):
         account_dialog = AccountDialog(self.icon_owl)
         if account_dialog.exec_():
             logger.info("Setting account id")
-            self.set_write_settings(key='account', value=account_dialog.get_userid())
+            self.settings.set(key='account', value=account_dialog.get_userid())
             if self.thread:
                 self.thread.quit()
                 self.thread.wait()
@@ -256,12 +255,12 @@ class SystemTray(QSystemTrayIcon):
     
     @pyqtSlot(bool)
     def set_owl_flag(self, checked):
-        self.set_write_settings('owl', checked)
+        self.settings.set('owl', checked)
         self.owl_flag_signal.emit(checked)
     
     @pyqtSlot(bool)
     def set_owc_flag(self, checked):
-        self.set_write_settings('owc', checked)
+        self.settings.set('owc', checked)
         self.owc_flag_signal.emit(checked)
 
     def shutdown_computer(self):
@@ -284,13 +283,13 @@ class SystemTray(QSystemTrayIcon):
         if not os.path.isfile(self.history_location):
             logger.warning("No history file")
             history_data = {}
-            self.stats_dialog = StatsDialog(history_data, self.settings['account'], self.icon_owl, self.icon_owc)
+            self.stats_dialog = StatsDialog(history_data, self.settings.get('account'), self.icon_owl, self.icon_owc)
             self.stats_dialog.show()
         else:
             with open(self.history_location, 'r', newline='') as history_file:
                 history_data = csv.DictReader(history_file)
                 logger.info("Loaded history file")
-                self.stats_dialog = StatsDialog(history_data, self.settings['account'], self.icon_owl, self.icon_owc)
+                self.stats_dialog = StatsDialog(history_data, self.settings.get('account'), self.icon_owl, self.icon_owc)
                 self.stats_dialog.show()
                 self.stats_dialog.raise_()
                 self.stats_dialog.activateWindow()
@@ -306,24 +305,6 @@ class SystemTray(QSystemTrayIcon):
             self.thread.quit()
             self.thread.wait()
 
-    def load_settings(self):
-        if not os.path.isfile(self.config_location):
-            logger.info("Settings file doesn't exist.")
-            return
-
-        with open(self.config_location, 'r') as f:
-            try:
-                self.settings.update(json.load(f))
-            except Exception as e:
-                logger.error("Error loading settings file - " + str(e))
-        logger.info("Settings loaded")
-    
-    def set_write_settings(self, key=None, value=None):
-        logger.info(f"Setting: {key} - {value}")
-        if key:
-            self.settings[key] = value
-        with open(self.config_location, 'w') as f:
-            json.dump(self.settings, f, sort_keys=True, indent=4)
     
     def write_last_record(self):
         contenders, title, min_watch, accountid = self.last_record
@@ -349,7 +330,7 @@ class SystemTray(QSystemTrayIcon):
             if accountid:
                 writer.writerow([timestamp, accountid, contenders, title, min_watched])
             else:
-                writer.writerow([timestamp, self.settings['account'], contenders, title, min_watched])
+                writer.writerow([timestamp, self.settings.get('account'), contenders, title, min_watched])
             
     
 
