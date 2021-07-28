@@ -20,7 +20,7 @@ class CheckViewer(QObject):
     false_tracking = pyqtSignal(bool)
     exit_signal = pyqtSignal()
 
-    def __init__(self, userid, owl_flag=True, owc_flag=True, min_check=10):
+    def __init__(self, userid=None, owl_flag=True, owc_flag=True, min_check=10):
         super().__init__()
         logger.info("Starting checkviewer")
 
@@ -36,29 +36,43 @@ class CheckViewer(QObject):
         self.check_timer = QTimer()
         self.check_timer.setInterval(60000)
         self.check_timer.timeout.connect(self.timeout_check_timer)
-        self.check_timer.start()
-
-        self.check_if_live()
+        if self.userid:
+            self.check_timer.start()
+            self.check_if_live()
 
     @pyqtSlot(bool)
+    @pyqtSlot(int)
     def set_owl_flag(self, checked):
-        self.owl_flag = checked
         if checked:
             self.start_check_timer()
+            self.owl_flag = True
         else:
+            self.owl_flag = False
             if self.watcher_timer.isActive() and not self.contenders:
                 self.watching_owl.emit(self.viewer.time_watched, self.viewer_title, True)
                 self.start_check_timer(check=False)
 
     @pyqtSlot(bool)
+    @pyqtSlot(int)
     def set_owc_flag(self, checked):
-        self.owc_flag = checked
         if checked:
             self.start_check_timer()
+            self.owc_flag = True
         else:
+            self.owc_flag = False
             if self.watcher_timer.isActive() and self.contenders:
                 self.watching_owc.emit(self.viewer.time_watched, self.viewer_title, True)  
                 self.start_check_timer()
+
+    @pyqtSlot(str)
+    def set_userid(self, userid):
+        logger.info(f"Setting userid - {userid}")
+        self.userid = userid
+        self.start_check_timer()
+
+    @pyqtSlot(int)
+    def set_min_check(self, min_check):
+        self.min_check = min_check
 
     @pyqtSlot()
     def start_check_timer(self, check=True):

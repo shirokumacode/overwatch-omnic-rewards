@@ -59,7 +59,7 @@ class Stats():
             ])
         
     def show(self, icon_owl:QIcon, icon_owc:QIcon, accountid:str):
-        logger.info("Show stats")
+        logger.info("Opening stats dialog")
         stats_owl = stats_owc = [0,0,0]
         
         if os.path.isfile(self.file_path):

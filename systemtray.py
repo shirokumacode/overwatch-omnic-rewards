@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 from checkviewer import CheckViewer
 from accountdialog import AccountDialog
 from stats import Stats
-from settings import Settings
+from settings import Settings, SettingsDialog
 
 import resources_qc
 
@@ -15,8 +15,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 class SystemTray(QSystemTrayIcon):
-    owl_flag_signal = pyqtSignal(bool)
-    owc_flag_signal = pyqtSignal(bool)
     exit_signal = pyqtSignal(bool)
 
     def __init__(self, quiet_mode=False, parent=None):
@@ -33,9 +31,9 @@ class SystemTray(QSystemTrayIcon):
         self.history_location = os.path.join(application_path, 'history.csv')
 
         self.settings = Settings(self.config_location)
+        self.settings_dialog = None
         self.stats = Stats(self.history_location)
         self.shutdown_flag = False
-        self.thread = None
 
         self.create_icons()
         self.setIcon(self.icon_disabled)
@@ -44,16 +42,21 @@ class SystemTray(QSystemTrayIcon):
         self.create_menu()
         self.activated.connect(self.click_systray)
 
-        if not quiet_mode:
-            self.setVisible(True)
+        self.create_thread()
 
-        if self.settings.get("account"):
-            self.create_thread()
-        else:
+        if not self.settings.get("account"):
             self.setIcon(self.icon_error)
             logger.error("Account not set")
             self.status_action.setText(f"Status: No account setup")
             self.showMessage("Account Not Set", "Setup an account to begin watching", self.icon_error, 5000)
+            self.checknow_action.setVisible(False)
+            self.shutdown_action.setVisible(False)
+        else:
+            self.account_action.setText(f"Account: {self.settings.get('account')}")
+
+
+        if not quiet_mode:
+            self.setVisible(True)
 
     def click_systray(self, reason):
         if reason == QSystemTrayIcon.Trigger:
@@ -79,23 +82,12 @@ class SystemTray(QSystemTrayIcon):
         self.account_action = QAction("Account: Click to set up")
 
         self.checknow_action = QAction("Check now")
-        self.checknow_action.setVisible(False)
-
-        self.owl_checker_action = QAction("OWL")
-        self.owl_checker_action.setVisible(False)
-        self.owl_checker_action.setCheckable(True)
-        self.owl_checker_action.setChecked(self.settings.get('owl', default=True))
-
-        self.owc_checker_action = QAction("OWC")
-        self.owc_checker_action.setCheckable(True)
-        self.owc_checker_action.setVisible(False)
-        self.owc_checker_action.setChecked(self.settings.get('owc', default=True))
 
         self.shutdown_action = QAction("Shutdown after end (Beta)")
         self.shutdown_action.setCheckable(True)
-        self.shutdown_action.setVisible(False)
         
         self.stats_action = QAction("Stats/History")
+        self.settings_action = QAction("Settings")
         self.quit_action= QAction("Exit")
     
         self.menu.addAction(self.status_action)
@@ -103,17 +95,16 @@ class SystemTray(QSystemTrayIcon):
         self.menu.addAction(self.account_action)
         self.menu.addSeparator()
         self.menu.addAction(self.checknow_action)
-        self.menu.addAction(self.owl_checker_action)
-        self.menu.addAction(self.owc_checker_action)
         self.menu.addAction(self.shutdown_action)
         self.menu.addSeparator()
         self.menu.addAction(self.stats_action)
+        self.menu.addAction(self.settings_action)
+
         self.menu.addAction(self.quit_action)
 
         self.account_action.triggered.connect(self.account_setup)
-        self.owl_checker_action.triggered.connect(self.set_owl_flag)
-        self.owc_checker_action.triggered.connect(self.set_owc_flag)
         self.stats_action.triggered.connect(self.show_stats)
+        self.settings_action.triggered.connect(self.show_settings)
         self.quit_action.triggered.connect(lambda : QApplication.instance().quit())
 
         self.setToolTip("Overwatch Omnic Perks")
@@ -121,7 +112,6 @@ class SystemTray(QSystemTrayIcon):
 
     def create_thread(self):
         logger.info("Creating thread")
-        self.account_action.setText(f"Account: {self.settings.get('account')}")
 
         self.thread = QThread()
 
@@ -144,16 +134,9 @@ class SystemTray(QSystemTrayIcon):
         self.check_viewer.exit_signal.connect(self.check_viewer.deleteLater)
         
         self.checknow_action.triggered.connect(self.check_viewer.start_check_timer)
-        self.owl_flag_signal.connect(self.check_viewer.set_owl_flag)
-        self.owc_flag_signal.connect(self.check_viewer.set_owc_flag)
         self.exit_signal.connect(self.check_viewer.prepare_to_exit)
         
         self.thread.start()
-
-        self.checknow_action.setVisible(True)
-        self.owl_checker_action.setVisible(True)
-        self.owc_checker_action.setVisible(True)
-        self.shutdown_action.setVisible(True)
 
     @pyqtSlot(str, bool)
     def update_error(self, error_msg, notification):
@@ -235,42 +218,57 @@ class SystemTray(QSystemTrayIcon):
 
     @pyqtSlot()
     def account_setup(self):
-        logger.info("Open setting account")
-        account_dialog = AccountDialog(self.icon_owl)
-        if account_dialog.exec_():
-            logger.info("Setting account id")
-            self.settings.set(key='account', value=account_dialog.get_userid())
-            if self.thread:
-                self.thread.quit()
-                self.thread.wait()
-            self.stats.write_record()
-            self.create_thread()
-        account_dialog.deleteLater()
-        logger.info("Closed Setting account")
-    
-    @pyqtSlot(bool)
-    def set_owl_flag(self, checked):
-        self.settings.set('owl', checked)
-        self.owl_flag_signal.emit(checked)
-    
-    @pyqtSlot(bool)
-    def set_owc_flag(self, checked):
-        self.settings.set('owc', checked)
-        self.owc_flag_signal.emit(checked)
+        logger.info("Opening account dialog")
+        self.account_dialog = AccountDialog(self.icon_owl)
+        self.account_dialog.accepted.connect(self.save_account)
+        self.account_dialog.show()
+        self.account_dialog.raise_()
+        self.account_dialog.activateWindow()
 
+    @pyqtSlot()
+    def save_account(self):
+        logger.info("Setting account")
+        account_id = self.account_dialog.get_userid()
+        self.settings.set(key='account', value=account_id)
+        self.stats.write_record()
+        QMetaObject.invokeMethod(
+            self.check_viewer,
+            'set_userid',
+            Q_ARG(str, account_id)
+        )
+        self.checknow_action.setVisible(True)
+        self.shutdown_action.setVisible(True)
+        self.account_dialog.deleteLater()
+
+        self.account_action.setText(f"Account: {self.settings.get('account')}")
+        if self.settings_dialog:
+            self.settings_dialog.refresh_account()
 
     @pyqtSlot()
     def show_stats(self):
         self.stats.show(self.icon_owl, self.icon_owc, self.settings.get('account'))
 
     @pyqtSlot()
+    def show_settings(self):
+        logger.info("Opening settings dialog")
+        self.settings_dialog = SettingsDialog(self.icon_owl, self.settings)
+        self.settings_dialog.account_input.clicked.connect(self.account_setup)
+        self.settings_dialog.owl_input.stateChanged.connect(self.check_viewer.set_owl_flag)
+        self.settings_dialog.owc_input.stateChanged.connect(self.check_viewer.set_owc_flag)
+        self.settings_dialog.min_check_input.valueChanged.connect(self.check_viewer.set_min_check)
+
+        self.settings_dialog.show()
+        self.settings_dialog.raise_()
+        self.settings_dialog.activateWindow()
+        self.settings_dialog.finished.connect(self.settings_dialog.deleteLater)
+
+    @pyqtSlot()
     def prepare_to_exit(self):
         logger.info("Preparing to exit")
         self.stats.write_record()
-        if self.thread: 
-            self.exit_signal.emit(True)
-            self.thread.quit()
-            self.thread.wait()
+        self.exit_signal.emit(True)
+        self.thread.quit()
+        self.thread.wait()
     
     def shutdown_computer(self):
         if self.shutdown_action.isChecked():
