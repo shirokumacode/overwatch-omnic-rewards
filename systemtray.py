@@ -242,6 +242,7 @@ class SystemTray(QSystemTrayIcon):
 
         self.account_action.setText(f"Account: {self.settings.get('account')}")
         if self.settings_dialog:
+            # Settings dialog must not be deleted by QT else Core dumps
             self.settings_dialog.refresh_account()
 
     @pyqtSlot()
@@ -260,7 +261,8 @@ class SystemTray(QSystemTrayIcon):
         self.settings_dialog.show()
         self.settings_dialog.raise_()
         self.settings_dialog.activateWindow()
-        self.settings_dialog.finished.connect(self.settings_dialog.deleteLater)
+        # Make sure settings dialog is not deleted
+        #self.settings_dialog.finished.connect(self.settings_dialog.deleteLater)
 
     @pyqtSlot()
     def prepare_to_exit(self):
