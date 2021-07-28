@@ -120,7 +120,7 @@ class StatsDialog(QDialog):
         label_owc = QLabel("<h3>Overwatch Contenders</h3>")
         label_owc.setPixmap(icon_owc.pixmap(50,50))
 
-        btn_box = QDialogButtonBox(QDialogButtonBox.Cancel)
+        btn_box = QDialogButtonBox(QDialogButtonBox.Close)
         btn_box.rejected.connect(self.reject)
 
         inner_layout = QGridLayout()
