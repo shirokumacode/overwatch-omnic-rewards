@@ -267,8 +267,9 @@ class SystemTray(QSystemTrayIcon):
         logger.info("Preparing to exit")
         self.stats.write_record()
         self.exit_signal.emit(True)
-        self.thread.quit()
-        self.thread.wait()
+        if self.thread.isRunning():
+            self.thread.quit()
+            self.thread.wait()
     
     def shutdown_computer(self):
         if self.shutdown_action.isChecked():
