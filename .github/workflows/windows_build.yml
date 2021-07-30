@@ -1,11 +1,6 @@
-# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
-
 name: Windows Build Executable
 
-on:
-  release:
-    types: [created]
+on: workflow_dispatch
 
 jobs:
   build:
@@ -29,7 +24,9 @@ jobs:
         pipenv install --dev
     - name: Build with pyinstaller
       run: |
-        pyinstaller gui.py -n omnic_rewards_Windows -w -i icons\iconowl.ico --onefile 
+        pipenv run pip install pywin32-ctypes
+        pipenv run pip install pefile
+        pipenv run pyinstaller gui.py -n omnic_rewards_Windows -w -i icons\iconowl.ico --onefile 
     - name: Export .exe build file
       uses: actions/upload-artifact@v2.2.4
       with:
