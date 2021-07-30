@@ -14,19 +14,45 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+@dataclass(frozen=True)
+class Urls:
+    @dataclass()
+    class UrlsBase:
+        main: str
+        schedule: str
+        youtube_channel: str
+        youtube_live: str
+
+    owl = UrlsBase(
+        main="https://overwatchleague.com",
+        schedule="https://overwatchleague.com/schedule",
+        youtube_channel="https://youtube.com/overwatchleague",
+        youtube_live="https://youtube.com/overwatchleague/live"
+    )
+    owc = UrlsBase(
+        main="https://overwatchcontenders.com",
+        schedule="https://overwatchcontenders.com/schedule",
+        youtube_channel="https://youtube.com/overwatchcontenders",
+        youtube_live="https://youtube.com/overwatchcontenders/live"
+    )
+
+
 class Actions:
-    """ Helper static class to improve code readability when using Actions (decode string)"""
+    """ Helper static class to improve code readability when using Actions (decode string).
+    Works as a enum (but not one)"""
     nothing = None
     context_menu = 'context_menu'
     test_action = 'test'
+    open_youtube = 'open_youtube'
+    open_owl_owc = 'open_owl_owc'
 
     @classmethod
     def actions(cls):
-        return [cls.context_menu, cls.test_action]
+        return [cls.context_menu, cls.test_action, cls.open_youtube, cls.open_owl_owc]
 
     @classmethod
     def possible_actions(cls):
-        return [cls.nothing, cls.context_menu, cls.test_action]
+        return [cls.nothing, cls.context_menu, cls.test_action, cls.open_youtube, cls.open_owl_owc]
 
 
 @dataclass
@@ -36,7 +62,7 @@ class Settings:
     owl: bool = True
     owc: bool = True
     min_check: int = 10
-    middle_click: Optional[str] = None
+    middle_click: Optional[str] = Actions.open_owl_owc
     left_click: Optional[str] = Actions.context_menu
 
     def __post_init__(self):
@@ -122,11 +148,23 @@ class SettingsDialog(QDialog):
         self.account_input = QPushButton()
         self.owl_input = QCheckBox()
         self.owc_input = QCheckBox()
+
+        self.left_click_input = self._create_action_combobox()
+        self.middle_click_input = self._create_action_combobox()
+        layout = QFormLayout()
+        layout.addRow("Left Click", self.left_click_input)
+        layout.addRow("Middle Click", self.middle_click_input)
+        groupbox = QGroupBox()
+        groupbox.setTitle("System tray Icon")
+        groupbox.setLayout(layout)
+
         tab_1_layout.addRow("Account", self.account_input)
         tab_1_layout.addRow(" ", QWidget())  # Spacer hack
         tab_1_layout.addRow("Watch OWL", self.owl_input)
         tab_1_layout.addRow("Watch OWC", self.owc_input)
         tab_1_layout.addRow(" ", QWidget())  # Spacer hack
+        tab_1_layout.addRow(groupbox)
+
         self.tab_1.setLayout(tab_1_layout)
 
         # Tab 2
@@ -145,11 +183,16 @@ class SettingsDialog(QDialog):
 
         self.setLayout(outer_layout)
 
+    def _create_action_combobox(self):
+        combo = QComboBox()
+        combo.addItem("Nothing", Actions.nothing)
+        combo.addItem("Context Menu", Actions.context_menu)
+        combo.addItem("Open OWL/OWC website", Actions.open_owl_owc)
+        combo.addItem("Open Youtube", Actions.open_youtube)
+        return combo
+
     def refresh_values(self):
-        if account_id := self.settings.get('account'):
-            self.account_input.setText(account_id)
-        else:
-            self.account_input.setText("Click to add")
+        self.refresh_account()
         self.owl_input.setChecked(self.settings.get('owl'))
         self.owc_input.setChecked(self.settings.get('owc'))
         self.min_check_input.setValue((self.settings.get('min_check')))
@@ -159,11 +202,14 @@ class SettingsDialog(QDialog):
             self.account_input.setText(account_id)
         else:
             self.account_input.setText("Click to add")
+        self.account_input.adjustSize()
 
     def _connect_slots(self):
         self.owl_input.stateChanged.connect(lambda state: self.settings.set('owl', True if state else False))
         self.owc_input.stateChanged.connect(lambda state: self.settings.set('owc', True if state else False))
         self.min_check_input.valueChanged.connect(lambda value: self.settings.set('min_check', value))
+        self.left_click_input.activated.connect(lambda index: self.settings.set('left_click', self.left_click_input.itemData(index)))
+        self.middle_click_input.activated.connect(lambda index: self.settings.set('middle_click', self.middle_click_input.itemData(index)))
 
 
 if __name__ == "__main__":
@@ -172,5 +218,5 @@ if __name__ == "__main__":
     app = QApplication([])
     icon_owl = QIcon(os.path.join("icons", "iconowl.png"))
     dialog = SettingsDialog(icon_owl, settings)
-    app.setApplicationName('Overwatch Omnic Rewards')
+    print(Urls.owl.main)
     dialog.exec_()

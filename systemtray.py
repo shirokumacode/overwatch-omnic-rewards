@@ -9,7 +9,7 @@ import sys
 
 from accountdialog import AccountDialog
 from checkviewer import CheckViewer
-from settings import SettingsManager, SettingsDialog, Actions
+from settings import SettingsManager, SettingsDialog, Actions, Urls
 from stats import Stats
 
 import resources_qc
@@ -308,6 +308,22 @@ class SystemTray(QSystemTrayIcon):
             return
         elif action == Actions.context_menu:
             self.contextMenu().popup((QCursor.pos()))
+        elif action == Actions.open_youtube:
+            record = self.stats.get_record()
+            if record is None:
+                QDesktopServices.openUrl(QUrl(Urls.owl.youtube_channel))
+            elif not record.contenders:
+                QDesktopServices.openUrl(QUrl(Urls.owl.youtube_live))
+            elif record.contenders:
+                QDesktopServices.openUrl(QUrl(Urls.owc.youtube_live))
+        elif action == Actions.open_owl_owc:
+            record = self.stats.get_record()
+            if record is None:
+                QDesktopServices.openUrl(QUrl(Urls.owl.main))
+            elif not record.contenders:
+                QDesktopServices.openUrl(QUrl(Urls.owl.main))
+            elif record.contenders:
+                QDesktopServices.openUrl(QUrl(Urls.owc.main))
         elif action == Actions.test_action:
             self.showMessage("Example", "test")
         else:
