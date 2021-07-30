@@ -9,7 +9,6 @@ lxml = "*"
 pyqt5 = "*"
 
 [dev-packages]
-pylint = "*"
 flask = "*"
 pyinstaller = "*"
 
