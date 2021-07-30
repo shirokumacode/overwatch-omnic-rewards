@@ -1,4 +1,4 @@
-name: Windows Build Executable
+name: Linux Build Executable
 
 on: workflow_dispatch
 
@@ -17,17 +17,20 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Install Qt and Xcb dependencies
+      run: |
+        # Need dependencies to work
+        # https://github.com/ActivityWatch/activitywatch/pull/604
+        # Big thanks for documenting your steps and problem
+        sudo apt-get install -y qt5-default libfontconfig1 libxcb1
     - name: Install and configure pipenv
       run: |
-        # Not using pipenv due to a bug in qt that breaks desktop session when installed with pip 
         python -m pip install --upgrade pip
-        sudo apt-get install python3-pyqt5
-        sudo apt-get install python3-lxml
-        sudo apt-get install python3-requests
-        pip3 install --user pyinstaller 
+        python -m pip install pipenv
+        pipenv install --dev 
     - name: Build with pyinstaller
       run: |
-        pyinstaller gui.py -n omnic_rewards_Linux --onefile  
+        pipenv run pyinstaller --debug all gui.py -n omnic_rewards_Linux --onefile 
     - name: Export executable build file
       uses: actions/upload-artifact@v2.2.4
       with:
