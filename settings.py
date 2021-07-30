@@ -196,6 +196,8 @@ class SettingsDialog(QDialog):
         self.owl_input.setChecked(self.settings.get('owl'))
         self.owc_input.setChecked(self.settings.get('owc'))
         self.min_check_input.setValue((self.settings.get('min_check')))
+        self.left_click_input.setCurrentIndex(self.left_click_input.findData(self.settings.get("left_click")))
+        self.middle_click_input.setCurrentIndex(self.middle_click_input.findData(self.settings.get("middle_click")))
 
     def refresh_account(self):
         if account_id := self.settings.get('account'):
