@@ -1,19 +1,24 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-import sys, argparse, logging, os
 
+import argparse
 import logging
-logger = logging.getLogger(__name__)
+import os
+import sys
 
 from systemtray import SystemTray
 
-def main():
+logger = logging.getLogger(__name__)
 
+
+def main():
     options, qt_args = create_arg_parser()
-    
+
     app = QApplication(sys.argv[:1] + qt_args)
-    app.setApplicationName("Overwatch Omnic Rewards")
+    app.setApplicationName("overwatch-omnic-rewards")
+
+    logger.debug(f'QT Desktop session: sessionId="{app.sessionId()}", sessionKey="{app.sessionKey()}"')
 
     if not QSystemTrayIcon.isSystemTrayAvailable():
         QMessageBox.critical(None, 'System tray not found', 'Can\'t start app. No system tray found')
@@ -31,24 +36,28 @@ def main():
 
     app.exec_()
 
+
 def create_arg_parser():
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group()
     group.add_argument("-v", "--verbose", help="Increase output verbosity", action="store_true")
     group.add_argument("-l", "--log", default="warning", help="Provide logging level")
-    parser.add_argument("-fl", "--file-log", nargs='?', const="omnic.log", help="Writes logs to a file. Will write to 'omnic.log' when no filename is provided")
+    parser.add_argument("-fl", "--file-log", nargs='?', const="omnic.log",
+                        help="Writes logs to a file. Will write to 'omnic.log' when no filename is provided")
     parser.add_argument("-q", "--quiet", help="Quiet mode. No system tray", action="store_true")
-    parser.add_argument("-d", "--debug", help="Debug Mode. Switches URL's endpoints to local ones for testing. See docs", action="store_true")
-    
+    parser.add_argument("-d", "--debug",
+                        help="Debug Mode. Switches URL's endpoints to local ones for testing. See docs",
+                        action="store_true")
+
     options, qt_args = parser.parse_known_args()
 
     levels = {
-    'critical': logging.CRITICAL,
-    'error': logging.ERROR,
-    'warn': logging.WARNING,
-    'warning': logging.WARNING,
-    'info': logging.INFO,
-    'debug': logging.DEBUG
+        'critical': logging.CRITICAL,
+        'error': logging.ERROR,
+        'warn': logging.WARNING,
+        'warning': logging.WARNING,
+        'info': logging.INFO,
+        'debug': logging.DEBUG
     }
     if options.verbose:
         level = levels.get('info')
@@ -73,10 +82,11 @@ def create_arg_parser():
         file_handler = logging.FileHandler(os.path.join(application_path, options.file_log))
         file_handler.setFormatter(logging.Formatter("[%(asctime)s]" + logging.BASIC_FORMAT))
         log_handlers.append(file_handler)
-        
+
     logging.basicConfig(handlers=log_handlers, level=level)
-    
+
     return options, qt_args
+
 
 def set_local_urls():
     logger.info("Using Local endpoints")
@@ -86,8 +96,7 @@ def set_local_urls():
     checker.OWC_URL = "http://127.0.0.1:5000/owcpage"
     Viewer.TRACKING_OWL = "http://127.0.0.1:5000/owl"
     Viewer.TRACKING_OWC = "http://127.0.0.1:5000/owc"
-    
+
 
 if __name__ == "__main__":
     main()
-    

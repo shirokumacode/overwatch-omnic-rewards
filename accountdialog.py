@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
+
 class AccountDialog(QDialog):
 
     def __init__(self, icon, parent=None):
@@ -38,7 +39,7 @@ class AccountDialog(QDialog):
         form_layout.addRow("UserId", self.userid_input)
 
         btn_box = QDialogButtonBox(QDialogButtonBox.Save | QDialogButtonBox.Cancel)
-        btn_box.accepted.connect(self.processValue)
+        btn_box.accepted.connect(self.process_value)
         btn_box.rejected.connect(self.reject)
 
         outer_layout.addWidget(instructions_label)
@@ -50,9 +51,8 @@ class AccountDialog(QDialog):
         self.setLayout(outer_layout)
 
         self.setFixedSize(self.sizeHint())
-        
 
-    def processValue(self):
+    def process_value(self):
         self.userID = self.userid_input.text().strip()
         self.accept()
 
@@ -62,9 +62,9 @@ class AccountDialog(QDialog):
 
 if __name__ == "__main__":
     import os
+
     app = QApplication([])
     icon_owl = QIcon(os.path.join("icons", "iconowl.png"))
     dialog = AccountDialog(icon_owl)
     dialog.exec_()
     print(dialog.get_userid())
-    

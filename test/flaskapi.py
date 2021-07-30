@@ -14,17 +14,20 @@ watch_min = 1
 
 api = Flask(__name__)
 
+
 @api.route('/owlpage', methods=['GET'])
 def get_owlpage():
     return_page = live_html
     #return_page = notlive_html
     return return_page
 
+
 @api.route('/owcpage', methods=['GET'])
 def get_owcpage():
     #return_page = live_html
     return_page = notlive_html
     return return_page
+
 
 @api.route('/owl', methods=['OPTIONS', 'POST'])
 def owl_tracking():
@@ -38,6 +41,7 @@ def owl_tracking():
         else:
             return json.jsonify(stop_tracking)
 
+
 @api.route('/owc', methods=['OPTIONS', 'POST'])
 def owc_tracking():
     global watch_min
@@ -49,6 +53,7 @@ def owc_tracking():
             return json.jsonify(continue_tracking)
         else:
             return json.jsonify(stop_tracking)
+
 
 if __name__ == '__main__':
     api.run()

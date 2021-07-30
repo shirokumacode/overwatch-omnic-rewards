@@ -1,7 +1,6 @@
+from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
-from PyQt5.QtCore import *
-import sys, os
 
 import requests
 
@@ -10,6 +9,7 @@ from utils.viewer import Viewer, OwlApiBadCode
 
 import logging
 logger = logging.getLogger(__name__)
+
 
 class CheckViewer(QObject):
     check_progress = pyqtSignal(int)
@@ -26,7 +26,7 @@ class CheckViewer(QObject):
 
         self.check_counter = 0
         self.min_check = min_check
-        self.userid = userid 
+        self.userid = userid
         self.owl_flag = owl_flag
         self.owc_flag = owc_flag
 
@@ -61,7 +61,7 @@ class CheckViewer(QObject):
         else:
             self.owc_flag = False
             if self.watcher_timer.isActive() and self.contenders:
-                self.watching_owc.emit(self.viewer.time_watched, self.viewer_title, True)  
+                self.watching_owc.emit(self.viewer.time_watched, self.viewer_title, True)
                 self.start_check_timer()
 
     @pyqtSlot(str)
@@ -79,19 +79,19 @@ class CheckViewer(QObject):
         logger.info("Starting checker timer")
         self.watcher_timer.stop()
         self.check_timer.start()
-        if check: 
-            self.check_if_live()       
+        if check:
+            self.check_if_live()
 
     @pyqtSlot()
     def timeout_check_timer(self):
         if self.check_counter >= self.min_check:
             self.check_counter = 0
-            self.check_if_live() 
+            self.check_if_live()
         else:
             self.check_counter += 1
-            self.check_progress.emit(self.min_check-self.check_counter)
-    
-    def check_if_live(self): 
+            self.check_progress.emit(self.min_check - self.check_counter)
+
+    def check_if_live(self):
         logger.info("Checking if live")
         self.checking.emit()
         try:
@@ -109,7 +109,7 @@ class CheckViewer(QObject):
         except requests.exceptions.HTTPError as errh:
             logger.error("Checker HTTP error - {errh.response.status_code}")
             self.error.emit(f"Checker HTTP error - {errh.response.status_code}", True)
-            self.check_timer.stop()            
+            self.check_timer.stop()
         except requests.exceptions.ConnectionError as errc:
             logger.error("Checker ConnectionError")
             self.error.emit("Couldn't connect - Check internet", False)
@@ -122,13 +122,13 @@ class CheckViewer(QObject):
             self.error.emit("OWL/OWC Page incorrectly formatted/error", True)
             self.check_timer.stop()
 
-    def start_watching(self, video_player, contenders=False): 
+    def start_watching(self, video_player, contenders=False):
         logger.info("Start Watching")
         # Stop checker QTimer
         self.check_timer.stop()
 
         self.viewer = Viewer(self.userid, video_player['video']['id'], video_player['uid'], contenders)
-        self.viewer_title = video_player['video']['metadata']['title'] 
+        self.viewer_title = video_player['video']['metadata']['title']
 
         # Create viewer QTimer
         self.watcher_timer.setInterval(60000)
@@ -137,9 +137,9 @@ class CheckViewer(QObject):
 
         self.contenders = contenders
         self.watch()
-    
+
     @pyqtSlot()
-    def watch(self): 
+    def watch(self):
         logger.info("Sending sentinel packets")
         try:
             tracking_status = self.viewer.send_sentinel_packets()
@@ -152,7 +152,7 @@ class CheckViewer(QObject):
             logger.error(f"Watcher HTTP error - {errh.response.status_code}")
             self.error.emit(f"Watcher HTTP error - {errh.response.status_code}", True)
             self.watcher_timer.stop()
-            self.start_check_timer(check=False)            
+            self.start_check_timer(check=False)
         except requests.exceptions.ConnectionError as errc:
             logger.error("Watcher ConnectionError")
             self.error.emit("Couldn't connect - Check internet", False)
@@ -176,14 +176,14 @@ class CheckViewer(QObject):
         else:
             if tracking_status:
                 if self.contenders:
-                    self.watching_owc.emit(self.viewer.time_watched, self.viewer_title, False)    
+                    self.watching_owc.emit(self.viewer.time_watched, self.viewer_title, False)
                 else:
                     self.watching_owl.emit(self.viewer.time_watched, self.viewer_title, False)
                 self.viewer.time_watched += 1
             elif self.viewer.time_watched:
                 self.watcher_timer.stop()
                 if self.contenders:
-                    self.watching_owc.emit(self.viewer.time_watched, self.viewer_title, True)    
+                    self.watching_owc.emit(self.viewer.time_watched, self.viewer_title, True)
                 else:
                     self.watching_owl.emit(self.viewer.time_watched, self.viewer_title, True)
                 self.start_check_timer(check=False)
@@ -192,7 +192,7 @@ class CheckViewer(QObject):
                 self.false_tracking.emit(self.contenders)
                 self.start_check_timer(check=False)
                 pass
-    
+
     @pyqtSlot(bool)
     def prepare_to_exit(self, exit_signal):
         logger.info("Preparing to exit")
@@ -200,5 +200,3 @@ class CheckViewer(QObject):
         self.watcher_timer.stop()
         if exit_signal:
             self.exit_signal.emit()
-
-
