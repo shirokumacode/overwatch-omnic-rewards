@@ -1,24 +1,27 @@
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-import os, sys, json, platform, csv, io
-from datetime import datetime, timezone
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
-from checkviewer import CheckViewer
+import logging
+import os
+import platform
+import sys
+
 from accountdialog import AccountDialog
+from checkviewer import CheckViewer
+from settings import SettingsManager, SettingsDialog, Actions
 from stats import Stats
-from settings import Settings, SettingsDialog
 
 import resources_qc
 
-import logging
 logger = logging.getLogger(__name__)
+
 
 class SystemTray(QSystemTrayIcon):
     exit_signal = pyqtSignal(bool)
 
     def __init__(self, quiet_mode=False, parent=None):
-        super().__init__(parent=parent)
+        super().__init__(parent)
         logger.info("Starting system tray")
 
         # PyInstaller fix for application path
@@ -30,7 +33,7 @@ class SystemTray(QSystemTrayIcon):
         self.config_location = os.path.join(application_path, 'config.json')
         self.history_location = os.path.join(application_path, 'history.csv')
 
-        self.settings = Settings(self.config_location)
+        self.settings = SettingsManager(self.config_location)
         self.settings_dialog = None
         self.stats = Stats(self.history_location)
         self.shutdown_flag = False
@@ -54,21 +57,12 @@ class SystemTray(QSystemTrayIcon):
         else:
             self.account_action.setText(f"Account: {self.settings.get('account')}")
 
-
         if not quiet_mode:
             self.setVisible(True)
 
-    def click_systray(self, reason):
-        if reason == QSystemTrayIcon.Trigger:
-            self.contextMenu().popup((QCursor.pos()))
-        elif reason == QSystemTrayIcon.MiddleClick:
-            # TODO Open Stream URL (Youtube or OWL/OWC) 
-            # QDesktopServices.openUrl()
-            pass
-
-    def create_icons(self):    
+    def create_icons(self):
         # Create the icons
-        self.icon_disabled = QIcon(os.path.join(":icons","icondisabled.png"))
+        self.icon_disabled = QIcon(os.path.join(":icons", "icondisabled.png"))
         self.icon_owl = QIcon(os.path.join(":icons", "iconowl.png"))
         self.icon_owc = QIcon(os.path.join(":icons", "iconowc.png"))
         self.icon_error = QIcon(os.path.join(":icons", "iconerror.png"))
@@ -85,11 +79,11 @@ class SystemTray(QSystemTrayIcon):
 
         self.shutdown_action = QAction("Shutdown after end (Beta)")
         self.shutdown_action.setCheckable(True)
-        
+
         self.stats_action = QAction("Stats/History")
         self.settings_action = QAction("Settings")
-        self.quit_action= QAction("Exit")
-    
+        self.quit_action = QAction("Exit")
+
         self.menu.addAction(self.status_action)
         self.menu.addSeparator()
         self.menu.addAction(self.account_action)
@@ -105,7 +99,7 @@ class SystemTray(QSystemTrayIcon):
         self.account_action.triggered.connect(self.account_setup)
         self.stats_action.triggered.connect(self.show_stats)
         self.settings_action.triggered.connect(self.show_settings)
-        self.quit_action.triggered.connect(lambda : QApplication.instance().quit())
+        self.quit_action.triggered.connect(lambda: QApplication.instance().quit())
 
         self.setToolTip("Overwatch Omnic Perks")
         self.setContextMenu(self.menu)
@@ -116,10 +110,10 @@ class SystemTray(QSystemTrayIcon):
         self.thread = QThread()
 
         self.check_viewer = CheckViewer(
-                                self.settings.get('account'), 
-                                owl_flag=self.settings.get('owl'), 
-                                owc_flag=self.settings.get('owc'), 
-                                min_check=self.settings.get('min_check')
+            self.settings.get('account'),
+            owl_flag=self.settings.get('owl'),
+            owc_flag=self.settings.get('owc'),
+            min_check=self.settings.get('min_check')
         )
         self.check_viewer.moveToThread(self.thread)
 
@@ -132,10 +126,10 @@ class SystemTray(QSystemTrayIcon):
         self.check_viewer.false_tracking.connect(self.update_false_tracking)
         self.check_viewer.error.connect(self.update_error)
         self.check_viewer.exit_signal.connect(self.check_viewer.deleteLater)
-        
+
         self.checknow_action.triggered.connect(self.check_viewer.start_check_timer)
         self.exit_signal.connect(self.check_viewer.prepare_to_exit)
-        
+
         self.thread.start()
 
     @pyqtSlot(str, bool)
@@ -145,7 +139,10 @@ class SystemTray(QSystemTrayIcon):
         self.status_action.setText(f"Status: {error_msg}")
         self.stats.write_record()
         if notification:
-            self.showMessage("Error - OWL Omnic Rewards", f"{error_msg} \n Perform a check now or restart app", self.icon_error, 10000)
+            self.showMessage(
+                "Error - OWL Omnic Rewards",
+                f"{error_msg} \n Perform a check now or restart app",
+                self.icon_error, 10000)
 
     @pyqtSlot()
     @pyqtSlot(int)
@@ -158,15 +155,17 @@ class SystemTray(QSystemTrayIcon):
             if self.shutdown_flag and min_remaining == self.settings.get('min_check'):
                 if self.shutdown_action.isChecked():
                     logger.info("Shutdown in 30s")
-                    self.showMessage("Shutdown in 30s", "Not Live. Will try to shutdown in 30s. Uncheck the option to cancel", self.icon_owl, 30000)
+                    self.showMessage("Shutdown in 30s",
+                                     "Not Live. Will try to shutdown in 30s. Uncheck the option to cancel",
+                                     self.icon_owl, 30000)
                     QTimer.singleShot(30000, self.shutdown_computer)
                 else:
-                     self.shutdown_flag = False
+                    self.shutdown_flag = False
         else:
             logger.info("Checking OWL/OWC page")
             self.status_action.setText("Status: Checking OWL/OWC page")
 
-    @pyqtSlot(int,str,bool)
+    @pyqtSlot(int, str, bool)
     def update_watching_owl(self, min_watching, title, end):
         self.setIcon(self.icon_owl)
         self.stats.set_record(False, min_watching, title, self.settings.get('account'))
@@ -179,15 +178,17 @@ class SystemTray(QSystemTrayIcon):
             logger.info(f"Watching OWL for {min_watching}min")
         else:
             self.stats.write_record()
-            self.showMessage("Watched Overwatch League", f"Watched {min_watching}mins of {title}", self.icon_owl, 10000)
+            self.showMessage("Watched Overwatch League",
+                             f"Watched {min_watching}mins of {title}",
+                             self.icon_owl, 10000)
             logger.info(f"Watched {min_watching}mins of OWL - {title}")
 
             self.status_action.setText(f"Status: Watched OWL for {min_watching}min")
             self.checknow_action.setEnabled(True)
             if self.shutdown_action.isChecked():
-                self.shutdown_flag = True 
+                self.shutdown_flag = True
 
-    @pyqtSlot(int,str,bool)
+    @pyqtSlot(int, str, bool)
     def update_watching_owc(self, min_watching, title, end):
         self.setIcon(self.icon_owc)
         self.stats.set_record(True, min_watching, title, self.settings.get('account'))
@@ -200,13 +201,16 @@ class SystemTray(QSystemTrayIcon):
             logger.info(f"Watching OWC for {min_watching}min")
         else:
             self.stats.write_record()
-            self.showMessage("Watched Overwatch Contenders", f"Watched {min_watching}mins of {title}", self.icon_owc, 10000)
+            self.showMessage("Watched Overwatch Contenders",
+                             f"Watched {min_watching}mins of {title}",
+                             self.icon_owc,
+                             10000)
             logger.info(f"Watched {min_watching}mins of OWC - {title}")
 
             self.status_action.setText(f"Status: Watched OWC for {min_watching}min")
             self.checknow_action.setEnabled(True)
             if self.shutdown_action.isChecked():
-                self.shutdown_flag = True 
+                self.shutdown_flag = True
 
     @pyqtSlot(bool)
     def update_false_tracking(self, contenders):
@@ -262,7 +266,7 @@ class SystemTray(QSystemTrayIcon):
         self.settings_dialog.raise_()
         self.settings_dialog.activateWindow()
         # Make sure settings dialog is not deleted
-        #self.settings_dialog.finished.connect(self.settings_dialog.deleteLater)
+        # self.settings_dialog.finished.connect(self.settings_dialog.deleteLater)
 
     @pyqtSlot()
     def prepare_to_exit(self):
@@ -272,13 +276,13 @@ class SystemTray(QSystemTrayIcon):
         if self.thread.isRunning():
             self.thread.quit()
             self.thread.wait()
-    
+
     def shutdown_computer(self):
         if self.shutdown_action.isChecked():
             logger.info("Shutting down computer")
             system = platform.system()
             if system == 'Linux':
-                os.system("systemctl poweroff") 
+                os.system("systemctl poweroff")
             elif system == 'Windows':
                 os.system("shutdown /s /f /t 30")
             elif system == 'Darwin':
@@ -287,5 +291,24 @@ class SystemTray(QSystemTrayIcon):
             logger.info("Shutdown was canceled")
             self.shutdown_flag = False
 
-    
+    def click_systray(self, reason):
+        if reason == QSystemTrayIcon.Trigger:
+            action = self.settings.get('left_click')
+            self.perform_action(action)
+        elif reason == QSystemTrayIcon.MiddleClick:
+            # TODO Open Stream URL (Youtube or OWL/OWC)
+            # QDesktopServices.openUrl()
+            action = self.settings.get('middle_click')
+            self.perform_action(action)
+            pass
 
+    def perform_action(self, action):
+        # Needs rewrite under Python 3.10 using match - Pattern Matching
+        if action is None:
+            return
+        elif action == Actions.context_menu:
+            self.contextMenu().popup((QCursor.pos()))
+        elif action == Actions.test_action:
+            self.showMessage("Example", "test")
+        else:
+            logger.warning(f'Unknown action - {action}')

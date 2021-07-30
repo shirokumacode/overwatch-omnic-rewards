@@ -2,30 +2,63 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
-import os, json
+import json
+from json import JSONDecodeError
+import dataclasses
+from dataclasses import dataclass
+from typing import Optional
+
+import os
 
 import logging
-
 logger = logging.getLogger(__name__)
 
 
-class Settings():
+class Actions:
+    """ Helper static class to improve code readability when using Actions (decode string)"""
+    nothing = None
+    context_menu = 'context_menu'
+    test_action = 'test'
+
+    @classmethod
+    def actions(cls):
+        return [cls.context_menu, cls.test_action]
+
+    @classmethod
+    def possible_actions(cls):
+        return [cls.nothing, cls.context_menu, cls.test_action]
+
+
+@dataclass
+class Settings:
+    """ Default settings class """
+    account: str = ''
+    owl: bool = True
+    owc: bool = True
+    min_check: int = 10
+    middle_click: Optional[str] = None
+    left_click: Optional[str] = Actions.context_menu
+
+    def __post_init__(self):
+        possible_actions = Actions.possible_actions()
+        if self.middle_click not in possible_actions:
+            self.middle_click = None
+        if self.left_click not in possible_actions:
+            self.left_click = None
+
+
+class SettingsManager:
     # Default settings
-    settings = {
-        'account': '',
-        'owl': True,
-        'owc': True,
-        'min_check': 10
-    }
+    settings = Settings()
 
     def __init__(self, location: str):
         self.file_path = location
         self.load_settings()
 
-    def get(self, key, default=None):
-        if key in self.settings:
-            return self.settings[key]
-        else:
+    def get(self, key: str, default=None):
+        try:
+            return self.settings.__getattribute__(key)
+        except AttributeError:
             return default
 
     def load_settings(self):
@@ -35,25 +68,34 @@ class Settings():
 
         with open(self.file_path, 'r') as f:
             try:
-                self.settings.update(json.load(f))
-            except Exception as e:
+                data = json.load(f)
+            except JSONDecodeError as e:
                 logger.error("Error loading settings file - " + str(e))
+                return
+            # Filter extra fields
+            fields = Settings.__annotations__
+            data_filtered = {key: value for (key, value) in data.items() if key in fields}
+            # Update fields
+            for key in fields:
+                if key in data_filtered:
+                    self.settings.__setattr__(key, data_filtered[key])
+
         logger.info("Settings loaded")
 
-    def set(self, key, value, flush_file=True):
+    def set(self, key: str, value, flush_file=True):
         logger.debug(f"Setting: {key} - {value}")
         if key:
-            self.settings[key] = value
+            self.settings.__setattr__(key, value)
         if flush_file:
             self.write_file()
 
     def write_file(self):
         with open(self.file_path, 'w') as f:
-            json.dump(self.settings, f, sort_keys=True, indent=4)
+            json.dump(dataclasses.asdict(self.settings), f, indent=4)
 
 
 class SettingsDialog(QDialog):
-    def __init__(self, icon: QIcon, settings: Settings, parent=None):
+    def __init__(self, icon: QIcon, settings: SettingsManager, parent=None):
         super().__init__(parent)
         self.settings = settings
 
@@ -126,8 +168,9 @@ class SettingsDialog(QDialog):
 
 if __name__ == "__main__":
     import os
-    settings = Settings('config.json')
+    settings = SettingsManager('config.json')
     app = QApplication([])
     icon_owl = QIcon(os.path.join("icons", "iconowl.png"))
     dialog = SettingsDialog(icon_owl, settings)
+    app.setApplicationName('Overwatch Omnic Rewards')
     dialog.exec_()
