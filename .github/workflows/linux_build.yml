@@ -30,7 +30,7 @@ jobs:
         pipenv install --dev 
     - name: Build with pyinstaller
       run: |
-        pipenv run pyinstaller --debug all gui.py -n omnic_rewards_Linux --onefile 
+        pipenv run pyinstaller gui.py -n omnic_rewards_Linux --onefile 
     - name: Export executable build file
       uses: actions/upload-artifact@v2.2.4
       with:
