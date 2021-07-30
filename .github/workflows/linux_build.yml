@@ -1,0 +1,35 @@
+name: Windows Build Executable
+
+on: workflow_dispatch
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.9]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install and configure pipenv
+      run: |
+        # Not using pipenv due to a bug in qt that breaks desktop session when installed with pip 
+        python -m pip install --upgrade pip
+        sudo apt-get install python3-pyqt5
+        sudo apt-get install python3-lxml
+        sudo apt-get install python3-requests
+        pip3 install --user pyinstaller 
+    - name: Build with pyinstaller
+      run: |
+        pyinstaller gui.py -n omnic_rewards_Linux --onefile  
+    - name: Export executable build file
+      uses: actions/upload-artifact@v2.2.4
+      with:
+        name: linux-build
+        path: dist/omnic_rewards_Linux
