@@ -44,4 +44,4 @@ jobs:
         upload_url: ${{ github.event.release.upload_url }}
         asset_path: dist/omnic_rewards_Mac.app
         asset_name: omnic_rewards_Mac.app
-        asset_content_type: application/octet-streame
+        asset_content_type: application/octet-stream
