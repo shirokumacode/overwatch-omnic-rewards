@@ -37,8 +37,7 @@ class CheckViewer(QObject):
         self.check_timer.setInterval(60000)
         self.check_timer.timeout.connect(self.timeout_check_timer)
         if self.userid:
-            self.check_timer.start()
-            self.check_if_live()
+            self.start_check_timer()
 
     @pyqtSlot(bool)
     @pyqtSlot(int)

@@ -63,7 +63,7 @@ It is as you don't rely on the youtube player status (playing/not playing) to tr
 This app behaves like a normal browser/user and should be undetectable.
 I reverse engineered the mechanism that is used to track the user on OWL/OWC site. The mechanism itself is very simple. 
 
-There is a possiblity that the devs change the mechanism used, but it should be possible to patch the app fairly easily. Can't guarantee it will work forever. 
+If the devs change the mechanism, it should be possible to patch the app fairly easily. Can't guarantee it will work forever. 
 </details>
 
 <details>
@@ -73,7 +73,7 @@ You should check out the utils folder and the examples inside. Any python progra
 
 <details>
 <summary>Can you make this app run at startup/login/boot?</summary>
-You certainly can. Just download the executable follow the steps below
+You certainly can. Just download the executable and follow the steps below
 
 - [Windows guide](https://support.microsoft.com/en-us/windows/add-an-app-to-run-automatically-at-startup-in-windows-10-150da165-dcd9-7230-517b-cf3c295d89dd)
 - Linux - depends on the distribution/DE
@@ -132,17 +132,17 @@ Run the app with verbose mode (logging level: info)
 ```shell
 python gui.py -v
 ```
-You can also set the logging level (info, warning, debug) with
+You can also set the logging level (info, warning, debug)
 ```shell
 python gui.py -l <logging level>
 ```
 
-If you need to get the logs in a file format with a timestamp use (_\<filename\>_ is optional, defaults to _omnic.log_)
+If you need to get the logs in a file format with a timestamp (_\<filename\>_ is optional, defaults to _omnic.log_)
 ```shell
 python gui.py --file-log <filename>
 ```
 ### Building/package the app
-Simply run PyInstaller
+Run PyInstaller
 - Linux build
 ```shell
 pyinstaller gui.py -n omnic_rewards_Linux --onefile 
@@ -152,7 +152,7 @@ pyinstaller gui.py -n omnic_rewards_Linux --onefile
 pyinstaller gui.py -n omnic_rewards_Windows -w -i icons\iconowl.ico --onefile 
 ```
 
-Code/PR away and feel free to criticize my code. I would very much like to **get real advice** as it was my first time using PyQt.
+###Code/PR away and feel free to criticize my code. I would really like to **get real advice** as it was my first time using PyQt.
 
 ## Common Problems/Additional Questions
 
