@@ -296,8 +296,6 @@ class SystemTray(QSystemTrayIcon):
             action = self.settings.get('left_click')
             self.perform_action(action)
         elif reason == QSystemTrayIcon.MiddleClick:
-            # TODO Open Stream URL (Youtube or OWL/OWC)
-            # QDesktopServices.openUrl()
             action = self.settings.get('middle_click')
             self.perform_action(action)
             pass
