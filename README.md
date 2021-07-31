@@ -1,6 +1,7 @@
 # Overwatch Omnic Rewards
 [![Windows Build](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/windows_build.yml/badge.svg)](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/windows_build.yml)
 [![Linux Build](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/linux_build.yml/badge.svg)](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/linux_build.yml) 
+[![MacOS Build](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/macos_build.yml/badge.svg)](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/macos_build.yml) 
 
 A **System Tray** app designed to **help** players **earn Overwatch League tokens** and **Contenders skins**. Cross-platform (Windows/Linux/MacOS). Created using Python and PyQt5. 
 
@@ -28,7 +29,9 @@ A **System Tray** app designed to **help** players **earn Overwatch League token
 
 ## Install
 
-Check the [releases section](https://github.com/shirokumacode/overwatch-omnic-rewards/releases/) for Windows/Linux executables. MacOS users should check out the [How to run](#how-to-run) section to run the app.
+Check the [releases section](https://github.com/shirokumacode/overwatch-omnic-rewards/releases/) for Windows/Linux executables. MacOS builds are experimental for now.
+
+Can't currently test the builds on Windows and MacOS. Windows builds are probably ok at the moment but MacOS users should check out the [How to run](#how-to-run) section to run the app just in case.
 
 ## FAQ
 <details>

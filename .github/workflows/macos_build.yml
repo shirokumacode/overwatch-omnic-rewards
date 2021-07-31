@@ -1,4 +1,4 @@
-name: Windows Build Executable
+name: MacOS Build Executable
 
 on:
   workflow_dispatch:
@@ -8,7 +8,7 @@ on:
 jobs:
   build:
 
-    runs-on: windows-latest
+    runs-on: macos-latest
     strategy:
       fail-fast: false
       matrix:
@@ -27,14 +27,13 @@ jobs:
         pipenv install --dev
     - name: Build with pyinstaller
       run: |
-        pipenv run pip install pywin32-ctypes
-        pipenv run pip install pefile
-        pipenv run pyinstaller gui.py -n omnic_rewards_Windows -w -i icons\iconowl.ico --onefile 
+        pipenv run pip install macholib
+        pipenv run pyinstaller gui.py -n omnic_rewards_Mac -w -i icons\iconowl.ico --onefile
     - name: Export .exe build file
       uses: actions/upload-artifact@v2.2.4
       with:
-        name: windows-build
-        path: dist/omnic_rewards_Windows.exe
+        name: macos-build
+        path: dist/omnic_rewards_Mac.app
     - name: Upload Release Asset
       id: upload-release-asset
       if: github.event_name == 'release'
@@ -43,6 +42,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: dist/omnic_rewards_Windows.exe
-        asset_name: omnic_rewards_Windows.exe
-        asset_content_type: application/vnd.microsoft.portable-executable
+        asset_path: dist/omnic_rewards_Mac.app
+        asset_name: omnic_rewards_Mac.app
+        asset_content_type: application/octet-streame
