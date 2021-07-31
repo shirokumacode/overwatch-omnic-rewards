@@ -1,4 +1,6 @@
 # Overwatch Omnic Rewards
+[![Windows Build](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/windows_build.yml/badge.svg)](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/windows_build.yml)
+[![Linux Build](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/linux_build.yml/badge.svg)](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/linux_build.yml) 
 
 A **System Tray** app designed to **help** players **earn Overwatch League tokens** and **Contenders skins**. Cross-platform (Windows/Linux/MacOS). Created using Python and PyQt5. 
 
