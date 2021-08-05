@@ -36,7 +36,7 @@ Can't currently test the builds on Windows and MacOS. Windows builds are probabl
 ## FAQ
 <details>
 <summary>How does it work?</summary>
-The app checks every 10min if OWL/OWC is currently live. If it's live, it will start to "watch" and track watch time.
+The app checks every 10min if OWL/OWC is currently live. If it's live, it will start to "watch" and track watch time. It uses the same mechanism as the OWL/OWC website to track your watch time.
 </details>
 
 <details>

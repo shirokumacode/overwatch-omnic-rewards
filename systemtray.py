@@ -77,7 +77,7 @@ class SystemTray(QSystemTrayIcon):
 
         self.checknow_action = QAction("Check now")
 
-        self.shutdown_action = QAction("Shutdown after end (Beta)")
+        self.shutdown_action = QAction("Shutdown on end")
         self.shutdown_action.setCheckable(True)
 
         self.stats_action = QAction("Stats/History")
@@ -169,11 +169,11 @@ class SystemTray(QSystemTrayIcon):
     def update_watching_owl(self, min_watching, title, end):
         self.setIcon(self.icon_owl)
         self.stats.set_record(False, min_watching, title, self.settings.get('account'))
-        if min_watching == 0:
-            self.showMessage("Watching Overwatch League", title, self.icon_owl, 10000)
-            self.checknow_action.setEnabled(False)
-            logger.info("Started watching OWL")
         if not end:
+            if min_watching == 0:
+                self.showMessage("Watching Overwatch League", title, self.icon_owl, 10000)
+                self.checknow_action.setEnabled(False)
+                logger.info("Started watching OWL")
             self.status_action.setText(f"Status: Watching OWL for {min_watching}min")
             logger.info(f"Watching OWL for {min_watching}min")
         else:
@@ -192,11 +192,11 @@ class SystemTray(QSystemTrayIcon):
     def update_watching_owc(self, min_watching, title, end):
         self.setIcon(self.icon_owc)
         self.stats.set_record(True, min_watching, title, self.settings.get('account'))
-        if min_watching == 0:
-            self.showMessage("Watching Overwatch Contenders", title, self.icon_owc, 10000)
-            self.checknow_action.setEnabled(False)
-            logger.info("Started watching OWC")
         if not end:
+            if min_watching == 0:
+                self.showMessage("Watching Overwatch Contenders", title, self.icon_owc, 10000)
+                self.checknow_action.setEnabled(False)
+                logger.info("Started watching OWC")
             self.status_action.setText(f"Status: Watching OWC for {min_watching}min")
             logger.info(f"Watching OWC for {min_watching}min")
         else:
@@ -251,6 +251,7 @@ class SystemTray(QSystemTrayIcon):
 
     @pyqtSlot()
     def show_stats(self):
+        print(self.settings.settings)
         self.stats.show(self.icon_owl, self.icon_owc, self.settings.get('account'))
 
     @pyqtSlot()
@@ -298,14 +299,13 @@ class SystemTray(QSystemTrayIcon):
         elif reason == QSystemTrayIcon.MiddleClick:
             action = self.settings.get('middle_click')
             self.perform_action(action)
-            pass
 
     def perform_action(self, action):
         # Needs rewrite under Python 3.10 using match - Pattern Matching
         if action is None:
             return
         elif action == Actions.context_menu:
-            self.contextMenu().popup((QCursor.pos()))
+            self.contextMenu().popup(QCursor.pos())
         elif action == Actions.open_youtube:
             record = self.stats.get_record()
             if record is None:

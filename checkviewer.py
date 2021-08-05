@@ -5,7 +5,7 @@ from PyQt5.QtGui import *
 import requests
 
 import utils.checker as checker
-from utils.viewer import Viewer, OwlApiBadCode
+from utils.viewer import Viewer, ViewerStatusCodeError
 
 import logging
 logger = logging.getLogger(__name__)
@@ -33,6 +33,8 @@ class CheckViewer(QObject):
     def run(self):
         # Create QTimers
         self.watcher_timer = QTimer()
+        self.watcher_timer.setInterval(60000)
+        self.watcher_timer.timeout.connect(self.watch)
         self.check_timer = QTimer()
         self.check_timer.setInterval(60000)
         self.check_timer.timeout.connect(self.timeout_check_timer)
@@ -43,8 +45,8 @@ class CheckViewer(QObject):
     @pyqtSlot(int)
     def set_owl_flag(self, checked):
         if checked:
-            self.start_check_timer()
             self.owl_flag = True
+            self.start_check_timer()
         else:
             self.owl_flag = False
             if self.watcher_timer.isActive() and not self.contenders:
@@ -55,13 +57,13 @@ class CheckViewer(QObject):
     @pyqtSlot(int)
     def set_owc_flag(self, checked):
         if checked:
-            self.start_check_timer()
             self.owc_flag = True
+            self.start_check_timer()
         else:
             self.owc_flag = False
             if self.watcher_timer.isActive() and self.contenders:
                 self.watching_owc.emit(self.viewer.time_watched, self.viewer_title, True)
-                self.start_check_timer()
+                self.start_check_timer(check=False)
 
     @pyqtSlot(str)
     def set_userid(self, userid):
@@ -130,8 +132,6 @@ class CheckViewer(QObject):
         self.viewer_title = video_player['video']['metadata']['title']
 
         # Create viewer QTimer
-        self.watcher_timer.setInterval(60000)
-        self.watcher_timer.timeout.connect(self.watch)
         self.watcher_timer.start()
 
         self.contenders = contenders
@@ -162,7 +162,7 @@ class CheckViewer(QObject):
             self.error.emit("Unknown error (requests). Check Logs", True)
             self.watcher_timer.stop()
             self.start_check_timer(check=False)
-        except OwlApiBadCode as e:
+        except ViewerStatusCodeError as e:
             logger.error(f"Watcher Bad API Response - {e.response}")
             self.error.emit("Bad response from API. Check Logs", True)
             self.watcher_timer.stop()

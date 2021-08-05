@@ -70,7 +70,7 @@ class Viewer():
         # Parse Response
         resd = json.loads(r2.text)
         if resd["status"] != 200:
-            raise OwlApiBadCode(r2.text)
+            raise ViewerStatusCodeError(r2.text)
         if resd["data"]["continueTracking"]:
             return True
         return False
@@ -109,7 +109,7 @@ class Viewer():
         return response
 
 
-class OwlApiBadCode(Exception):
+class ViewerStatusCodeError(Exception):
 
     def __init__(self, response):
         super().__init__(self)
