@@ -25,7 +25,10 @@ class Stats:
     def __init__(self, location: str, icon_owl: QIcon, icon_owc: QIcon):
         self.file_path = location
         self.stats_dialog = StatsDialog(icon_owl, icon_owc)
+        self.stats_account = ''
         self.refresh_stats_timer = QTimer()
+        self.refresh_stats_timer.setInterval(60000)
+        self.refresh_stats_timer.timeout.connect(self._update_values)
         self.record = None
 
     def get_record(self) -> Optional[Record]:
@@ -72,8 +75,6 @@ class Stats:
         self.stats_dialog.raise_()
         self.stats_dialog.activateWindow()
 
-        self.refresh_stats_timer.setInterval(60000)
-        self.refresh_stats_timer.timeout.connect(self._update_values)
         self.refresh_stats_timer.start()
         self.stats_dialog.finished.connect(self.refresh_stats_timer.stop)
 
