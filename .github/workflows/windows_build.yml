@@ -34,7 +34,7 @@ jobs:
       uses: actions/upload-artifact@v2.2.4
       with:
         name: windows-build
-        path: dist/omnic_rewards_Windows.exe
+        path: dist/
     - name: Upload Release Asset
       id: upload-release-asset
       if: github.event_name == 'release'
