@@ -33,7 +33,7 @@ jobs:
       uses: actions/upload-artifact@v2.2.4
       with:
         name: macos-build
-        path: dist/omnic_rewards_Mac.app
+        path: dist/
     - name: Upload Release Asset
       id: upload-release-asset
       if: github.event_name == 'release'
