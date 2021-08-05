@@ -22,8 +22,10 @@ class Record:
 
 
 class Stats:
-    def __init__(self, location: str):
+    def __init__(self, location: str, icon_owl: QIcon, icon_owc: QIcon):
         self.file_path = location
+        self.stats_dialog = StatsDialog(icon_owl, icon_owc)
+        self.refresh_stats_timer = QTimer()
         self.record = None
 
     def get_record(self) -> Optional[Record]:
@@ -61,23 +63,48 @@ class Stats:
                 self.record.min_watched
             ])
 
-    def show(self, icon_owl: QIcon, icon_owc: QIcon, accountid: str):
+    def show(self, accountid: str):
         logger.info("Opening stats dialog")
-        stats_owl = stats_owc = [0, 0, 0]
+        self.stats_account = accountid
+        self._update_values()
 
-        if os.path.isfile(self.file_path):
-            with open(self.file_path, 'r', newline='') as history_file:
-                stats_data = csv.DictReader(history_file)
-                logger.info("Loaded history file")
-                stats_owl, stats_owc = self._process_file(stats_data, accountid)
-
-        self.stats_dialog = StatsDialog(stats_owl, stats_owc, icon_owl, icon_owc)
         self.stats_dialog.show()
         self.stats_dialog.raise_()
         self.stats_dialog.activateWindow()
-        self.stats_dialog.finished.connect(self.stats_dialog.deleteLater)
 
-    def _process_file(self, history_data: dict, accountid: str) -> (list, list):
+        self.refresh_stats_timer.setInterval(60000)
+        self.refresh_stats_timer.timeout.connect(self._update_values)
+        self.refresh_stats_timer.start()
+        self.stats_dialog.finished.connect(self.refresh_stats_timer.stop)
+
+    def _update_values(self):
+        logger.debug("Updating values on dialog")
+        stats_owl, stats_owc = self._get_stats_summary(self.stats_account)
+        self.stats_dialog.update_values(stats_owl, stats_owc, self.stats_account)
+
+    def _get_stats_summary(self, accountid):
+        stats_data = []
+
+        if self.record:
+            stats_data.append({
+                    'Timestamp': datetime.now().astimezone().isoformat(),
+                    'Account': self.record.accountid,
+                    'Type': 'owc' if self.record.contenders else 'owl',
+                    'Title': self.record.title,
+                    'Minutes': self.record.min_watched
+            })
+
+        if os.path.isfile(self.file_path):
+            with open(self.file_path, 'r', newline='') as history_file:
+                stats_data.extend(csv.DictReader(history_file))
+                logger.debug("Loaded history file")
+
+        stats_owl, stats_owc = self._process_data(stats_data, accountid)
+
+        return stats_owl, stats_owc
+
+
+    def _process_data(self, history_data: list, accountid: str) -> (list, list):
         range_day = datetime.now().astimezone() - timedelta(hours=24)
         range_week = datetime.now().astimezone() - timedelta(days=7)
         current_month = datetime.now().astimezone().month
@@ -114,9 +141,13 @@ class Stats:
 
 class StatsDialog(QDialog):
 
-    def __init__(self, stats_owl: list, stats_owc: list, icon_owl: QIcon, icon_owc: QIcon, parent=None):
+    def __init__(self, icon_owl: QIcon, icon_owc: QIcon, stats_owl=None, stats_owc=None, accountid=None, parent=None):
         super().__init__(parent)
 
+        if stats_owc is None:
+            stats_owc = [0, 0, 0]
+        if stats_owl is None:
+            stats_owl = [0, 0, 0]
         self.setWindowTitle("Stats/History")
         self.setWindowIcon(icon_owl)
 
@@ -125,65 +156,102 @@ class StatsDialog(QDialog):
         label_owc = QLabel("<h3>Overwatch Contenders</h3>")
         label_owc.setPixmap(icon_owc.pixmap(50, 50))
 
+        self.button_layout = QHBoxLayout()
+        self.label_account = QLabel()
+        self.label_account.setTextFormat(Qt.RichText)
+        self.label_account.setText(f"<b> Account: </b> {accountid}" if accountid else '')
+        self.button_layout.addWidget(self.label_account)
+
         btn_box = QDialogButtonBox(QDialogButtonBox.Close)
         btn_box.rejected.connect(self.reject)
+        self.button_layout.addWidget(btn_box)
 
-        inner_layout = QGridLayout()
+        self.inner_layout = QGridLayout()
 
-        inner_layout.addWidget(label_owl, 0, 0, 3, 1)
-        inner_layout.addWidget(QLabel("Last 24h"), 0, 1)
-        inner_layout.addWidget(QLabel("Last 7d"), 1, 1)
-        inner_layout.addWidget(QLabel("This month"), 2, 1)
-        inner_layout.addWidget(QLabel(str(stats_owl[0]) + " min"), 0, 2)
-        inner_layout.addWidget(QLabel(str(stats_owl[1]) + " min"), 1, 2)
-        inner_layout.addWidget(QLabel(str(stats_owl[2]) + " min"), 2, 2)
-        inner_layout.addWidget(QLabel(str(round(stats_owl[0] / 60, 2)) + "h"), 0, 3)
-        inner_layout.addWidget(QLabel(str(round(stats_owl[1] / 60, 2)) + "h"), 1, 3)
-        inner_layout.addWidget(QLabel(str(round(stats_owl[2] / 60, 2)) + "h"), 2, 3)
-        inner_layout.addWidget(QLabel(str(int(stats_owl[0] / 60) * 5) + " tokens"), 0, 4)
-        inner_layout.addWidget(QLabel(str(int(stats_owl[1] / 60) * 5) + " tokens"), 1, 4)
-        inner_layout.addWidget(QLabel(str(int(stats_owl[2] / 60) * 5) + " tokens"), 2, 4)
+        self.inner_layout.addWidget(label_owl, 0, 0, 3, 1)
+        self.inner_layout.addWidget(QLabel("Last 24h"), 0, 1)
+        self.inner_layout.addWidget(QLabel("Last 7d"), 1, 1)
+        self.inner_layout.addWidget(QLabel("This month"), 2, 1)
+        self.inner_layout.addWidget(QLabel(str(stats_owl[0]) + " min"), 0, 2)
+        self.inner_layout.addWidget(QLabel(str(stats_owl[1]) + " min"), 1, 2)
+        self.inner_layout.addWidget(QLabel(str(stats_owl[2]) + " min"), 2, 2)
+        self.inner_layout.addWidget(QLabel(str(round(stats_owl[0] / 60, 2)) + "h"), 0, 3)
+        self.inner_layout.addWidget(QLabel(str(round(stats_owl[1] / 60, 2)) + "h"), 1, 3)
+        self.inner_layout.addWidget(QLabel(str(round(stats_owl[2] / 60, 2)) + "h"), 2, 3)
+        self.inner_layout.addWidget(QLabel(str(int(stats_owl[0] / 60) * 5) + " tokens"), 0, 4)
+        self.inner_layout.addWidget(QLabel(str(int(stats_owl[1] / 60) * 5) + " tokens"), 1, 4)
+        self.inner_layout.addWidget(QLabel(str(int(stats_owl[2] / 60) * 5) + " tokens"), 2, 4)
 
         line = QFrame()
         line.setFrameShape(QFrame.HLine)
         line.setLineWidth(3)
-        inner_layout.addWidget(line, 3, 0, 2, 5)
+        self.inner_layout.addWidget(line, 3, 0, 2, 5)
 
-        inner_layout.addWidget(label_owc, 5, 0, 3, 1)
-        inner_layout.addWidget(QLabel("Last 24h"), 5, 1)
-        inner_layout.addWidget(QLabel("Last 7d"), 6, 1)
-        inner_layout.addWidget(QLabel("This month"), 7, 1)
-        inner_layout.addWidget(QLabel(str(stats_owc[0]) + " min"), 5, 2)
-        inner_layout.addWidget(QLabel(str(stats_owc[1]) + " min"), 6, 2)
-        inner_layout.addWidget(QLabel(str(stats_owc[2]) + " min"), 7, 2)
-        inner_layout.addWidget(QLabel(str(round(stats_owc[0] / 60, 2)) + "h"), 5, 3)
-        inner_layout.addWidget(QLabel(str(round(stats_owc[1] / 60, 2)) + "h"), 6, 3)
-        inner_layout.addWidget(QLabel(str(round(stats_owc[2] / 60, 2)) + "h"), 7, 3)
+        self.inner_layout.addWidget(label_owc, 5, 0, 3, 1)
+        self.inner_layout.addWidget(QLabel("Last 24h"), 5, 1)
+        self.inner_layout.addWidget(QLabel("Last 7d"), 6, 1)
+        self.inner_layout.addWidget(QLabel("This month"), 7, 1)
+        self.inner_layout.addWidget(QLabel(str(stats_owc[0]) + " min"), 5, 2)
+        self.inner_layout.addWidget(QLabel(str(stats_owc[1]) + " min"), 6, 2)
+        self.inner_layout.addWidget(QLabel(str(stats_owc[2]) + " min"), 7, 2)
+        self.inner_layout.addWidget(QLabel(str(round(stats_owc[0] / 60, 2)) + "h"), 5, 3)
+        self.inner_layout.addWidget(QLabel(str(round(stats_owc[1] / 60, 2)) + "h"), 6, 3)
+        self.inner_layout.addWidget(QLabel(str(round(stats_owc[2] / 60, 2)) + "h"), 7, 3)
 
         outer_layout = QVBoxLayout()
-        outer_layout.addLayout(inner_layout)
-        outer_layout.addWidget(btn_box)
+        outer_layout.addLayout(self.inner_layout)
+        outer_layout.addLayout(self.button_layout)
         outer_layout.setSpacing(20)
 
         self.setLayout(outer_layout)
 
         self.setFixedSize(self.sizeHint())
 
+    def update_values(self, stats_owl: list, stats_owc: list, accountid: str):
+        self.label_account.setText(f"<b> Account: </b> {accountid}")
+        self.inner_layout.removeWidget(self.inner_layout.itemAtPosition(0, 2).widget())
+        self.inner_layout.removeWidget(self.inner_layout.itemAtPosition(1, 2).widget())
+        self.inner_layout.removeWidget(self.inner_layout.itemAtPosition(2, 2).widget())
+        self.inner_layout.removeWidget(self.inner_layout.itemAtPosition(0, 3).widget())
+        self.inner_layout.removeWidget(self.inner_layout.itemAtPosition(1, 3).widget())
+        self.inner_layout.removeWidget(self.inner_layout.itemAtPosition(2, 3).widget())
+        self.inner_layout.removeWidget(self.inner_layout.itemAtPosition(0, 4).widget())
+        self.inner_layout.removeWidget(self.inner_layout.itemAtPosition(1, 4).widget())
+        self.inner_layout.removeWidget(self.inner_layout.itemAtPosition(2, 4).widget())
+        self.inner_layout.removeWidget(self.inner_layout.itemAtPosition(5, 2).widget())
+        self.inner_layout.removeWidget(self.inner_layout.itemAtPosition(6, 2).widget())
+        self.inner_layout.removeWidget(self.inner_layout.itemAtPosition(7, 2).widget())
+        self.inner_layout.removeWidget(self.inner_layout.itemAtPosition(5, 3).widget())
+        self.inner_layout.removeWidget(self.inner_layout.itemAtPosition(6, 3).widget())
+        self.inner_layout.removeWidget(self.inner_layout.itemAtPosition(7, 3).widget())
+        self.inner_layout.addWidget(QLabel(str(stats_owl[0]) + " min"), 0, 2)
+        self.inner_layout.addWidget(QLabel(str(stats_owl[1]) + " min"), 1, 2)
+        self.inner_layout.addWidget(QLabel(str(stats_owl[2]) + " min"), 2, 2)
+        self.inner_layout.addWidget(QLabel(str(round(stats_owl[0] / 60, 2)) + "h"), 0, 3)
+        self.inner_layout.addWidget(QLabel(str(round(stats_owl[1] / 60, 2)) + "h"), 1, 3)
+        self.inner_layout.addWidget(QLabel(str(round(stats_owl[2] / 60, 2)) + "h"), 2, 3)
+        self.inner_layout.addWidget(QLabel(str(int(stats_owl[0] / 60) * 5) + " tokens"), 0, 4)
+        self.inner_layout.addWidget(QLabel(str(int(stats_owl[1] / 60) * 5) + " tokens"), 1, 4)
+        self.inner_layout.addWidget(QLabel(str(int(stats_owl[2] / 60) * 5) + " tokens"), 2, 4)
+        self.inner_layout.addWidget(QLabel(str(stats_owc[0]) + " min"), 5, 2)
+        self.inner_layout.addWidget(QLabel(str(stats_owc[1]) + " min"), 6, 2)
+        self.inner_layout.addWidget(QLabel(str(stats_owc[2]) + " min"), 7, 2)
+        self.inner_layout.addWidget(QLabel(str(round(stats_owc[0] / 60, 2)) + "h"), 5, 3)
+        self.inner_layout.addWidget(QLabel(str(round(stats_owc[1] / 60, 2)) + "h"), 6, 3)
+        self.inner_layout.addWidget(QLabel(str(round(stats_owc[2] / 60, 2)) + "h"), 7, 3)
 
 if __name__ == "__main__":
-    import io, os, csv
+    global stats
+    import os, csv
+    logging.basicConfig(level=logging.INFO)
 
     app = QApplication([])
     icon_owl = QIcon(os.path.join("icons", "iconowl.png"))
     icon_owc = QIcon(os.path.join("icons", "iconowc.png"))
 
-    # accountid = "123456789"
-    # stats = Stats('fakehistory.csv')
-    # stats.write(contenders=False, min_watched=20, title="Fake OWL 1", accountid=accountid)
-    # stats.write(contenders=False, min_watched=40, title="Fake OWL 2", accountid=accountid)
-    # stats.write(contenders=True, min_watched=10, title="Fake OWC 1", accountid=accountid)
-    # stats.write(contenders=True, min_watched=20, title="Fake OWC 2", accountid=accountid)
-    # stats.show(icon_owl, icon_owc, accountid)
+    accountid = "123456789"
+    stats = Stats('history.csv', icon_owl, icon_owc)
+    stats.set_record(contenders=True, min_watched=24, title="Fake OWL test", accountid='123456789')
+    stats.show(accountid)
 
-    dialog = StatsDialog([12, 56, 78], [24, 67, 100], icon_owl, icon_owc)
-    dialog.exec_()
+    app.exec_()

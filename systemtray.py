@@ -33,13 +33,13 @@ class SystemTray(QSystemTrayIcon):
         self.config_location = os.path.join(application_path, 'config.json')
         self.history_location = os.path.join(application_path, 'history.csv')
 
-        self.settings = SettingsManager(self.config_location)
-        self.stats = Stats(self.history_location)
-        self.shutdown_flag = False
-
         self.create_icons()
         self.setIcon(self.icon_disabled)
         QApplication.instance().setWindowIcon(self.icon_owl)
+
+        self.settings = SettingsManager(self.config_location)
+        self.stats = Stats(self.history_location, self.icon_owl, self.icon_owc)
+        self.shutdown_flag = False
 
         self.create_menu()
         self.activated.connect(self.click_systray)
@@ -254,7 +254,7 @@ class SystemTray(QSystemTrayIcon):
 
     @pyqtSlot()
     def show_stats(self):
-        self.stats.show(self.icon_owl, self.icon_owc, self.settings.get('account'))
+        self.stats.show(self.settings.get('account'))
 
     @pyqtSlot()
     def show_settings(self):
