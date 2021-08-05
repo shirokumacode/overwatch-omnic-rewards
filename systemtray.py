@@ -34,7 +34,6 @@ class SystemTray(QSystemTrayIcon):
         self.history_location = os.path.join(application_path, 'history.csv')
 
         self.settings = SettingsManager(self.config_location)
-        self.settings_dialog = None
         self.stats = Stats(self.history_location)
         self.shutdown_flag = False
 
@@ -46,6 +45,12 @@ class SystemTray(QSystemTrayIcon):
         self.activated.connect(self.click_systray)
 
         self.create_thread()
+
+        self.settings_dialog = SettingsDialog(self.icon_owl, self.settings)
+        self.settings_dialog.account_input.clicked.connect(self.account_setup)
+        self.settings_dialog.owl_input.stateChanged.connect(self.check_viewer.set_owl_flag)
+        self.settings_dialog.owc_input.stateChanged.connect(self.check_viewer.set_owc_flag)
+        self.settings_dialog.min_check_input.valueChanged.connect(self.check_viewer.set_min_check)
 
         if not self.settings.get("account"):
             self.setIcon(self.icon_error)
@@ -245,23 +250,17 @@ class SystemTray(QSystemTrayIcon):
         self.account_dialog.deleteLater()
 
         self.account_action.setText(f"Account: {self.settings.get('account')}")
-        if self.settings_dialog:
-            # Settings dialog must not be deleted by QT else Core dumps
-            self.settings_dialog.refresh_account()
+        self.settings_dialog.refresh_account()
 
     @pyqtSlot()
     def show_stats(self):
-        print(self.settings.settings)
         self.stats.show(self.icon_owl, self.icon_owc, self.settings.get('account'))
 
     @pyqtSlot()
     def show_settings(self):
         logger.info("Opening settings dialog")
-        self.settings_dialog = SettingsDialog(self.icon_owl, self.settings)
-        self.settings_dialog.account_input.clicked.connect(self.account_setup)
-        self.settings_dialog.owl_input.stateChanged.connect(self.check_viewer.set_owl_flag)
-        self.settings_dialog.owc_input.stateChanged.connect(self.check_viewer.set_owc_flag)
-        self.settings_dialog.min_check_input.valueChanged.connect(self.check_viewer.set_min_check)
+        # Debug current widgets (useful for memory leaks
+        #print(list(filter(lambda x: isinstance(x, SettingsDialog), QApplication.allWidgets())))
 
         self.settings_dialog.show()
         self.settings_dialog.raise_()
