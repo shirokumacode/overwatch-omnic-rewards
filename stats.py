@@ -206,7 +206,7 @@ class StatsDialog(QDialog):
 
         self.setLayout(outer_layout)
 
-        self.setFixedSize(self.sizeHint())
+        self.layout().setSizeConstraint(QLayout.SetFixedSize)
 
     def update_values(self, stats_owl: list, stats_owc: list, accountid: str):
         self.label_account.setText(f"<b> Account: </b> {accountid}")
