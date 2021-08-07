@@ -55,7 +55,7 @@ This mechanism was already found and implemented before (with minor differences)
 
 <details>
 <summary>Is it more reliable than the website?</summary>
-It is as you don't rely on the youtube player status (playing/not playing) to track. Also you can have adblockers blocking the necessary tracking endpoints. Hovewer I can't guarantee the OWL tracking endpoints are stable (sometimes they go down). 
+It is as you don't rely on the youtube player status (playing/not playing) to track. Also you can have ad-blockers blocking the necessary tracking endpoints. However I can't guarantee the OWL tracking endpoints are stable (sometimes they go down). 
 </details>
 
 <details>
@@ -152,7 +152,7 @@ pyinstaller gui.py -n omnic_rewards_Linux --onefile
 pyinstaller gui.py -n omnic_rewards_Windows -w -i icons\iconowl.ico --onefile 
 ```
 
-###Code/PR away and feel free to criticize my code. I would really like to **get real advice** as it was my first time using PyQt.
+### Code/PR away and feel free to criticize my code. I would really like to **get real advice** as it was my first time using PyQt.
 
 ## Common Problems/Additional Questions
 
@@ -180,7 +180,7 @@ That indicates a hard crash. Try to reproduce it and open a issue on Github so I
 
 <details>
 <summary>My PC didn't shutdown after the stream ended</summary>
-The app tries to shutdown the computer on the next false live check. Howewer keep in mind it's still in beta:
+The app tries to shutdown the computer on the next false live check.
 
 - Linux: Depends on *systemctl*
 - Windows: Not tested but should work
@@ -194,7 +194,7 @@ Open an issue on Github so I can try to fix it
 
 <details>
 <summary>Can I change the time between checks?</summary>
-You can via the config file (config.json) but you might get 0min watched warnings. I feel 10min (default) is a good compromise.
+You can via Settings->Experimental or manually changing the config file (config.json) but you might get 0min watched warnings (at the end of a stream) if it's too low. I feel 10min (default) is a good compromise.
 </details>
 
 <details>
@@ -209,7 +209,7 @@ The app creates a csv file with your watch history. Check the created file - his
 
 <details>
 <summary>Can I run this without the system tray icon?</summary>
-You can but it is not advisable. The argument -q or --quiet make the system tray not visible. You should enable it with the -v argument so you can get feedback of what is it doing
+You can but it is not advisable. The argument -q or --quiet makes the system tray not visible. You should enable it with the -v argument so you can get feedback of what is it doing
 
 ```shell
 python gui.py -q -v
