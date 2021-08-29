@@ -20,25 +20,16 @@ logger = logging.getLogger(__name__)
 class SystemTray(QSystemTrayIcon):
     exit_signal = pyqtSignal(bool)
 
-    def __init__(self, quiet_mode=False, parent=None):
+    def __init__(self, settings: SettingsManager, stats: Stats, quiet_mode=False, parent=None):
         super().__init__(parent)
         logger.info("Starting system tray")
-
-        # PyInstaller fix for application path
-        if getattr(sys, 'frozen', False):
-            application_path = os.path.dirname(sys.executable)
-        elif __file__:
-            application_path = os.path.dirname(__file__)
-
-        self.config_location = os.path.join(application_path, 'config.json')
-        self.history_location = os.path.join(application_path, 'history.csv')
 
         self.create_icons()
         self.setIcon(self.icon_disabled)
         QApplication.instance().setWindowIcon(self.icon_owl)
 
-        self.settings = SettingsManager(self.config_location)
-        self.stats = Stats(self.history_location)
+        self.settings = settings
+        self.stats = stats
         self.shutdown_flag = False
 
         self.create_menu()

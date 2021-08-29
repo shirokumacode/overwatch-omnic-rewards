@@ -7,16 +7,25 @@ import logging
 import os
 import sys
 
+from stats import Stats
+from settings import SettingsManager
 from systemtray import SystemTray
 
 logger = logging.getLogger(__name__)
 
 
 def main():
-    options, qt_args = create_arg_parser()
+    options, qt_args = arg_parse()
+    application_path = get_application_path()
+    configure_logging(options, application_path)
+
+    config_location = os.path.join(application_path, options.config)  # config.json
+    history_location = os.path.join(application_path, options.history)  # history.csv
+
+    settings = SettingsManager(config_location)
+    stats = Stats(history_location)
 
     app = QApplication(sys.argv[:1] + qt_args)
-    app.setApplicationName("overwatch-omnic-rewards")
 
     logger.debug(f'QT Desktop session: sessionId="{app.sessionId()}", sessionKey="{app.sessionKey()}"')
 
@@ -30,14 +39,17 @@ def main():
         set_local_urls()
 
     # Create the tray
-    tray = SystemTray(quiet_mode=options.quiet, parent=app)
+    tray = SystemTray(settings, stats, quiet_mode=options.quiet, parent=app)
     app.aboutToQuit.connect(tray.prepare_to_exit)
     app.commitDataRequest.connect(tray.prepare_to_exit)
+
+    app.setApplicationName("overwatch-omnic-rewards")
+    app.setApplicationVersion("1.1.3")
 
     app.exec_()
 
 
-def create_arg_parser():
+def arg_parse():
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group()
     group.add_argument("-v", "--verbose", help="Increase output verbosity", action="store_true")
@@ -48,9 +60,17 @@ def create_arg_parser():
     parser.add_argument("-d", "--debug",
                         help="Debug Mode. Switches URL's endpoints to local ones for testing. See docs",
                         action="store_true")
+    parser.add_argument("-cf", "--config", default="config.json",
+                       help="Specify config file. Needs to be in the same dir as app")
+    parser.add_argument("-hf", "--history", default="history.csv",
+                       help="Specify history file. Needs to be in the same dir as app")
 
     options, qt_args = parser.parse_known_args()
 
+    return options, qt_args
+
+
+def configure_logging(options, application_path: str):
     levels = {
         'critical': logging.CRITICAL,
         'error': logging.ERROR,
@@ -74,19 +94,19 @@ def create_arg_parser():
     log_handlers.append(stream_handler)
 
     if options.file_log:
-        # PyInstaller fix for application path
-        if getattr(sys, 'frozen', False):
-            application_path = os.path.dirname(sys.executable)
-        elif __file__:
-            application_path = os.path.dirname(__file__)
         file_handler = logging.FileHandler(os.path.join(application_path, options.file_log))
         file_handler.setFormatter(logging.Formatter("[%(asctime)s]" + logging.BASIC_FORMAT))
         log_handlers.append(file_handler)
 
     logging.basicConfig(handlers=log_handlers, level=level)
 
-    return options, qt_args
 
+def get_application_path() -> str:
+    # PyInstaller fix for application path
+    if getattr(sys, 'frozen', False):
+        return os.path.dirname(sys.executable)
+    elif __file__:
+        return os.path.dirname(__file__)
 
 def set_local_urls():
     logger.info("Using Local endpoints")
