@@ -3,6 +3,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
 import logging
+import sys
 
 from settings import SettingsManager
 from stats import Stats
@@ -18,7 +19,7 @@ class CLIApp(QObject):
 
         if not self.settings.get("account"):
             logger.error("No account set. Please setup and account on config.json or through the GUI")
-            QCoreApplication.instance().exit()
+            sys.exit(1)
 
         self.check_viewer = CheckViewer(
             self.settings.get('account'),
@@ -67,7 +68,7 @@ class CLIApp(QObject):
         if not self.check_viewer.check_timer.isActive() and not self.check_viewer.watcher_timer.isActive():
             self.check_viewer.start_check_timer()
 
-    @pyqtSlot() 
+    @pyqtSlot()
     def prepare_to_exit(self):
         logger.info("Preparing to exit")
         self.stats.write_record()
