@@ -10,7 +10,7 @@ import sys
 from accountdialog import AccountDialog
 from checkviewer import CheckViewer
 from settings import SettingsManager, SettingsDialog, Actions, Urls
-from stats import Stats
+from stats import Stats, StatsDialog
 
 import resources_qc
 
@@ -38,7 +38,7 @@ class SystemTray(QSystemTrayIcon):
         QApplication.instance().setWindowIcon(self.icon_owl)
 
         self.settings = SettingsManager(self.config_location)
-        self.stats = Stats(self.history_location, self.icon_owl, self.icon_owc)
+        self.stats = Stats(self.history_location)
         self.shutdown_flag = False
 
         self.create_menu()
@@ -51,6 +51,8 @@ class SystemTray(QSystemTrayIcon):
         self.settings_dialog.owl_input.stateChanged.connect(self.check_viewer.set_owl_flag)
         self.settings_dialog.owc_input.stateChanged.connect(self.check_viewer.set_owc_flag)
         self.settings_dialog.min_check_input.valueChanged.connect(self.check_viewer.set_min_check)
+
+        self.stats_dialog = StatsDialog(self.stats, self.icon_owl, self.icon_owc)
 
         if not self.settings.get("account"):
             self.setIcon(self.icon_error)
@@ -254,7 +256,7 @@ class SystemTray(QSystemTrayIcon):
 
     @pyqtSlot()
     def show_stats(self):
-        self.stats.show(self.settings.get('account'))
+        self.stats_dialog.show_dialog(self.settings.get('account'))
 
     @pyqtSlot()
     def show_settings(self):
