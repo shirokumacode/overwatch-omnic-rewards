@@ -15,6 +15,8 @@ from cli import CLIApp
 
 logger = logging.getLogger(__name__)
 
+APPLICATION_NAME = "overwatch-omnic-rewards"
+APPLICATION_VERSION = "1.2"
 
 def main():
     # Arg Parser and Logging
@@ -35,6 +37,7 @@ def main():
     if options.cli:
         logger.info("CLI Mode enabled")
         app = QCoreApplication(sys.argv[:1] + qt_args)
+        logger.debug(f"{APPLICATION_NAME} - v{APPLICATION_VERSION}")
 
         # Exit Application using signals hack
         # https://stackoverflow.com/questions/4938723/what-is-the-correct-way-to-make-my-pyqt-application-quit-when-killed-from-the-co
@@ -49,23 +52,23 @@ def main():
 
     else:
         app = QApplication(sys.argv[:1] + qt_args)
+        logger.debug(f"{APPLICATION_NAME} - v{APPLICATION_VERSION}")
         logger.debug(f'QT Desktop session: sessionId="{app.sessionId()}", sessionKey="{app.sessionKey()}"')
 
         if not QSystemTrayIcon.isSystemTrayAvailable():
             QMessageBox.critical(None, 'System tray not found', 'Can\'t start app. No system tray found')
             sys.exit(1)
-
         QApplication.setQuitOnLastWindowClosed(False)
+
         # Create the tray
         tray = SystemTray(settings, stats, parent=app)
         app.aboutToQuit.connect(tray.prepare_to_exit)
         app.commitDataRequest.connect(tray.prepare_to_exit)
 
-    app.setApplicationName("overwatch-omnic-rewards")
-    app.setApplicationVersion("1.2")
+    app.setApplicationName(APPLICATION_NAME)
+    app.setApplicationVersion(APPLICATION_VERSION)
 
     app.exec_()
-
 
 def arg_parse():
     parser = argparse.ArgumentParser()
