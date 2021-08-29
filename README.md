@@ -68,7 +68,7 @@ If the devs change the mechanism, it should be possible to patch the app fairly 
 
 <details>
 <summary>I am a developer. Can I see this method/code?</summary>
-You should check out the utils folder and the examples inside. Any python programmer should be able to see what it does in <5min. Feel free to use/reimplement or even create your own headless version.
+You should check out the utils folder and the examples inside. Any python programmer should be able to see what it does in <5min. Feel free to use/reimplement. 
 </details>
 
 <details>
@@ -199,7 +199,16 @@ You can via Settings->Experimental or manually changing the config file (config.
 
 <details>
 <summary>Can I run this with multiple accounts?</summary>
-You can. To do this you should place the app in different folders with different config files (config.json) for each account.
+You can. To do this you should
+
+- Place the app in different folders with different config files (config.json) for each account
+
+OR
+- Create multiple config files and run the app multiple times using the --config argument (CLI mode is also recommended to eliminate the multiple system tray icons -> --cli argument)
+```shell
+python app.py --config config1.json
+python app.py --config config2.json
+```
 </details>
 
 <details>
@@ -208,13 +217,13 @@ The app creates a csv file with your watch history. Check the created file - his
 </details>
 
 <details>
-<summary>Can I run this without the system tray icon?</summary>
-You can but it is not advisable. The argument -q or --quiet makes the system tray not visible. You should enable it with the -v argument so you can get feedback of what is it doing
+<summary>Can I run this without the system tray icon or on a server?</summary>
+You can the CLI mode. The argument -c or --cli makes the system tray not visible, and runs exclusively on the command line.
 
 ```shell
-python app.py -q -v
+python app.py --cli
 ```
-You can also develop your own headless version using the example inside the utils folder.
+Also this mode doesn't require any graphical dependencies so you can run it on a server without a display. This mode assumes that you already have a config.json with accountid field (copy one created previously and change it accordingly or create a json file with the accountid field).
 </details>
 
 <details>
