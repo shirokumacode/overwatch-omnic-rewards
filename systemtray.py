@@ -10,7 +10,7 @@ import sys
 from accountdialog import AccountDialog
 from checkviewer import CheckViewer
 from settings import SettingsManager, SettingsDialog, Actions, Urls
-from stats import Stats
+from stats import Stats, StatsDialog
 
 import resources_qc
 
@@ -20,25 +20,16 @@ logger = logging.getLogger(__name__)
 class SystemTray(QSystemTrayIcon):
     exit_signal = pyqtSignal(bool)
 
-    def __init__(self, quiet_mode=False, parent=None):
+    def __init__(self, settings: SettingsManager, stats: Stats, quiet_mode=False, parent=None):
         super().__init__(parent)
         logger.info("Starting system tray")
-
-        # PyInstaller fix for application path
-        if getattr(sys, 'frozen', False):
-            application_path = os.path.dirname(sys.executable)
-        elif __file__:
-            application_path = os.path.dirname(__file__)
-
-        self.config_location = os.path.join(application_path, 'config.json')
-        self.history_location = os.path.join(application_path, 'history.csv')
 
         self.create_icons()
         self.setIcon(self.icon_disabled)
         QApplication.instance().setWindowIcon(self.icon_owl)
 
-        self.settings = SettingsManager(self.config_location)
-        self.stats = Stats(self.history_location, self.icon_owl, self.icon_owc)
+        self.settings = settings
+        self.stats = stats
         self.shutdown_flag = False
 
         self.create_menu()
@@ -51,6 +42,8 @@ class SystemTray(QSystemTrayIcon):
         self.settings_dialog.owl_input.stateChanged.connect(self.check_viewer.set_owl_flag)
         self.settings_dialog.owc_input.stateChanged.connect(self.check_viewer.set_owc_flag)
         self.settings_dialog.min_check_input.valueChanged.connect(self.check_viewer.set_min_check)
+
+        self.stats_dialog = StatsDialog(self.stats, self.icon_owl, self.icon_owc)
 
         if not self.settings.get("account"):
             self.setIcon(self.icon_error)
@@ -254,7 +247,7 @@ class SystemTray(QSystemTrayIcon):
 
     @pyqtSlot()
     def show_stats(self):
-        self.stats.show(self.settings.get('account'))
+        self.stats_dialog.show_dialog(self.settings.get('account'))
 
     @pyqtSlot()
     def show_settings(self):

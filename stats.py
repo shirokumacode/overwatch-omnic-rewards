@@ -21,14 +21,12 @@ class Record:
     accountid: str
 
 
-class Stats:
-    def __init__(self, location: str, icon_owl: QIcon, icon_owc: QIcon):
+class Stats(QObject):
+    changed = pyqtSignal()
+
+    def __init__(self, location: str):
+        super().__init__()
         self.file_path = location
-        self.stats_dialog = StatsDialog(icon_owl, icon_owc)
-        self.stats_account = ''
-        self.refresh_stats_timer = QTimer()
-        self.refresh_stats_timer.setInterval(60000)
-        self.refresh_stats_timer.timeout.connect(self._update_values)
         self.record = None
 
     def get_record(self) -> Optional[Record]:
@@ -36,12 +34,14 @@ class Stats:
 
     def set_record(self, contenders: bool, min_watched: int, title: str, accountid: str):
         self.record = Record(contenders, min_watched, title, accountid)
+        self.changed.emit()
 
     def write_record(self):
         if self.record:
             logger.info("Writting history record")
             self._write()
             self.record = None
+            self.changed.emit()
 
     def _write(self):
         if os.path.isfile(self.file_path):
@@ -66,89 +66,16 @@ class Stats:
                 self.record.min_watched
             ])
 
-    def show(self, accountid: str):
-        logger.info("Opening stats dialog")
-        self.stats_account = accountid
-        self._update_values()
-
-        self.stats_dialog.show()
-        self.stats_dialog.raise_()
-        self.stats_dialog.activateWindow()
-
-        self.refresh_stats_timer.start()
-        self.stats_dialog.finished.connect(self.refresh_stats_timer.stop)
-
-    def _update_values(self):
-        logger.debug("Updating values on dialog")
-        stats_owl, stats_owc = self._get_stats_summary(self.stats_account)
-        self.stats_dialog.update_values(stats_owl, stats_owc, self.stats_account)
-
-    def _get_stats_summary(self, accountid):
-        stats_data = []
-
-        if self.record:
-            stats_data.append({
-                    'Timestamp': datetime.now().astimezone().isoformat(),
-                    'Account': self.record.accountid,
-                    'Type': 'owc' if self.record.contenders else 'owl',
-                    'Title': self.record.title,
-                    'Minutes': self.record.min_watched
-            })
-
-        if os.path.isfile(self.file_path):
-            with open(self.file_path, 'r', newline='') as history_file:
-                stats_data.extend(csv.DictReader(history_file))
-                logger.debug("Loaded history file")
-
-        stats_owl, stats_owc = self._process_data(stats_data, accountid)
-
-        return stats_owl, stats_owc
-
-
-    def _process_data(self, history_data: list, accountid: str) -> (list, list):
-        range_day = datetime.now().astimezone() - timedelta(hours=24)
-        range_week = datetime.now().astimezone() - timedelta(days=7)
-        current_month = datetime.now().astimezone().month
-
-        stats_owl = [0, 0, 0]
-        stats_owc = [0, 0, 0]
-
-        for row in history_data:
-            try:
-                if row['Account'] == accountid:
-                    if datetime.fromisoformat(row['Timestamp']) > range_day:
-                        if row['Type'] == 'owl':
-                            stats_owl[0] += int(row['Minutes'])
-                            stats_owl[1] += int(row['Minutes'])
-                        elif row['Type'] == 'owc':
-                            stats_owc[0] += int(row['Minutes'])
-                            stats_owc[1] += int(row['Minutes'])
-                    elif datetime.fromisoformat(row['Timestamp']) > range_week:
-                        if row['Type'] == 'owl':
-                            stats_owl[1] += int(row['Minutes'])
-                        elif row['Type'] == 'owc':
-                            stats_owc[1] += int(row['Minutes'])
-                    if datetime.fromisoformat(row['Timestamp']).month == current_month:
-                        if row['Type'] == 'owl':
-                            stats_owl[2] += int(row['Minutes'])
-                        elif row['Type'] == 'owc':
-                            stats_owc[2] += int(row['Minutes'])
-            except (KeyError, ValueError, TypeError) as e:
-                logger.warning(f"Malformed history file at {row} -  {e}")
-                continue
-
-        return stats_owl, stats_owc
-
 
 class StatsDialog(QDialog):
 
-    def __init__(self, icon_owl: QIcon, icon_owc: QIcon, stats_owl=None, stats_owc=None, accountid=None, parent=None):
+    def __init__(self, stats: Stats, icon_owl: QIcon, icon_owc: QIcon, accountid=None, parent=None):
         super().__init__(parent)
 
-        if stats_owc is None:
-            stats_owc = [0, 0, 0]
-        if stats_owl is None:
-            stats_owl = [0, 0, 0]
+        self.stats = stats
+        self.stats_account = accountid
+        stats_owc = [0, 0, 0]
+        stats_owl = [0, 0, 0]
         self.setWindowTitle("Stats/History")
         self.setWindowIcon(icon_owl)
 
@@ -208,7 +135,82 @@ class StatsDialog(QDialog):
 
         self.layout().setSizeConstraint(QLayout.SetFixedSize)
 
-    def update_values(self, stats_owl: list, stats_owc: list, accountid: str):
+    def show_dialog(self, accountid: str):
+        logger.info("Opening stats dialog")
+        self.stats_account = accountid
+        self._update_values()
+
+        self.show()
+        self.raise_()
+        self.activateWindow()
+
+        self.stats.changed.connect(self._update_values)
+        # This below causes crashes due to finished signal returning a int
+        # self.finished.connect(self.stats.changed.disconnect)
+        # Use lambda to ignore int returned from finished signal
+        self.finished.connect(lambda x: self.stats.changed.disconnect)
+
+    def _update_values(self):
+        logger.debug("Updating values on dialog")
+        stats_owl, stats_owc = self._get_stats_summary(self.stats_account)
+        self._replace_values(stats_owl, stats_owc, self.stats_account)
+
+    def _get_stats_summary(self, accountid: str):
+        stats_data = []
+
+        if self.stats.record:
+            stats_data.append({
+                    'Timestamp': datetime.now().astimezone().isoformat(),
+                    'Account': self.stats.record.accountid,
+                    'Type': 'owc' if self.stats.record.contenders else 'owl',
+                    'Title': self.stats.record.title,
+                    'Minutes': self.stats.record.min_watched
+            })
+
+        if os.path.isfile(self.stats.file_path):
+            with open(self.stats.file_path, 'r', newline='') as history_file:
+                stats_data.extend(csv.DictReader(history_file))
+                logger.debug("Loaded history file")
+
+        stats_owl, stats_owc = self._process_data(stats_data, accountid)
+
+        return stats_owl, stats_owc
+
+    def _process_data(self, history_data: list, accountid: str) -> (list, list):
+        range_day = datetime.now().astimezone() - timedelta(hours=24)
+        range_week = datetime.now().astimezone() - timedelta(days=7)
+        current_month = datetime.now().astimezone().month
+
+        stats_owl = [0, 0, 0]
+        stats_owc = [0, 0, 0]
+
+        for row in history_data:
+            try:
+                if row['Account'] == accountid:
+                    if datetime.fromisoformat(row['Timestamp']) > range_day:
+                        if row['Type'] == 'owl':
+                            stats_owl[0] += int(row['Minutes'])
+                            stats_owl[1] += int(row['Minutes'])
+                        elif row['Type'] == 'owc':
+                            stats_owc[0] += int(row['Minutes'])
+                            stats_owc[1] += int(row['Minutes'])
+                    elif datetime.fromisoformat(row['Timestamp']) > range_week:
+                        if row['Type'] == 'owl':
+                            stats_owl[1] += int(row['Minutes'])
+                        elif row['Type'] == 'owc':
+                            stats_owc[1] += int(row['Minutes'])
+                    if datetime.fromisoformat(row['Timestamp']).month == current_month:
+                        if row['Type'] == 'owl':
+                            stats_owl[2] += int(row['Minutes'])
+                        elif row['Type'] == 'owc':
+                            stats_owc[2] += int(row['Minutes'])
+            except (KeyError, ValueError, TypeError) as e:
+                logger.warning(f"Malformed history file at {row} -  {e}")
+                continue
+
+        return stats_owl, stats_owc
+
+    def _replace_values(self, stats_owl: list, stats_owc: list, accountid: str):
         self.label_account.setText(f"<b> Account: </b> {accountid}")
         self.inner_layout.removeWidget(self.inner_layout.itemAtPosition(0, 2).widget())
         self.inner_layout.removeWidget(self.inner_layout.itemAtPosition(1, 2).widget())

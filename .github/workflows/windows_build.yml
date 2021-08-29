@@ -29,7 +29,7 @@ jobs:
       run: |
         pipenv run pip install pywin32-ctypes
         pipenv run pip install pefile
-        pipenv run pyinstaller gui.py -n omnic_rewards_Windows -w -i icons\iconowl.ico --onefile 
+        pipenv run pyinstaller app.py -n omnic_rewards_Windows -w -i icons\iconowl.ico --onefile
     - name: Export .exe build file
       uses: actions/upload-artifact@v2.2.4
       with:

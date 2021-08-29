@@ -94,7 +94,7 @@ pip install pipenv
 ```
 3. Run the app
 ```shell
-pipenv run python gui.py
+pipenv run python app.py
 ```
 
 ## Developing
@@ -106,7 +106,7 @@ pipenv install --dev
 and then start a shell to get to the virtual env and then run the app.
 ```shell
 pipenv shell
-python gui.py
+python app.py
 ```
 
 (Optional) You can compile your own pyqt resource file. I already provide it for ease of use but you should make sure the code is right.
@@ -124,32 +124,32 @@ You can comment/uncomment certain lines to get the desired behaviour you want to
 
 To run the app using local endpoints
 ```shell
-python gui.py --debug
+python app.py --debug
 ```
 
 ### Debugging the app
 Run the app with verbose mode (logging level: info)
 ```shell
-python gui.py -v
+python app.py -v
 ```
 You can also set the logging level (info, warning, debug)
 ```shell
-python gui.py -l <logging level>
+python app.py -l <logging level>
 ```
 
 If you need to get the logs in a file format with a timestamp (_\<filename\>_ is optional, defaults to _omnic.log_)
 ```shell
-python gui.py --file-log <filename>
+python app.py --file-log <filename>
 ```
 ### Building/package the app
 Run PyInstaller
 - Linux build
 ```shell
-pyinstaller gui.py -n omnic_rewards_Linux --onefile 
+pyinstaller app.py -n omnic_rewards_Linux --onefile 
 ```
 - Windows build
 ```shell
-pyinstaller gui.py -n omnic_rewards_Windows -w -i icons\iconowl.ico --onefile 
+pyinstaller app.py -n omnic_rewards_Windows -w -i icons\iconowl.ico --onefile 
 ```
 
 ### Code/PR away and feel free to criticize my code. I would really like to **get real advice** as it was my first time using PyQt.
@@ -212,7 +212,7 @@ The app creates a csv file with your watch history. Check the created file - his
 You can but it is not advisable. The argument -q or --quiet makes the system tray not visible. You should enable it with the -v argument so you can get feedback of what is it doing
 
 ```shell
-python gui.py -q -v
+python app.py -q -v
 ```
 You can also develop your own headless version using the example inside the utils folder.
 </details>

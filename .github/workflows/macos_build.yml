@@ -28,7 +28,7 @@ jobs:
     - name: Build with pyinstaller
       run: |
         pipenv run pip install macholib
-        pipenv run pyinstaller gui.py -n omnic_rewards_Mac -w -i icons\iconowl.ico --onefile
+        pipenv run pyinstaller app.py -n omnic_rewards_Mac -w -i icons\iconowl.ico --onefile
     - name: Export .exe build file
       uses: actions/upload-artifact@v2.2.4
       with:
