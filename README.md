@@ -218,7 +218,7 @@ The app creates a csv file with your watch history. Check the created file - his
 
 <details>
 <summary>Can I run this without the system tray icon or on a server?</summary>
-You can the CLI mode. The argument -c or --cli makes the system tray not visible, and runs exclusively on the command line.
+You can using the CLI mode. The argument -c or --cli makes the system tray not visible, and runs exclusively on the command line.
 
 ```shell
 python app.py --cli
