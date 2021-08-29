@@ -46,7 +46,8 @@ class CheckViewer(QObject):
     def set_owl_flag(self, checked):
         if checked:
             self.owl_flag = True
-            self.start_check_timer()
+            if not self.watcher_timer.isActive():
+                self.start_check_timer()
         else:
             self.owl_flag = False
             if self.watcher_timer.isActive() and not self.contenders:
@@ -58,7 +59,8 @@ class CheckViewer(QObject):
     def set_owc_flag(self, checked):
         if checked:
             self.owc_flag = True
-            self.start_check_timer()
+            if not self.watcher_timer.isActive():
+                self.start_check_timer()
         else:
             self.owc_flag = False
             if self.watcher_timer.isActive() and self.contenders:
@@ -77,7 +79,7 @@ class CheckViewer(QObject):
 
     @pyqtSlot()
     def start_check_timer(self, check=True):
-        logger.info("Starting checker timer")
+        logger.debug("Starting checker timer")
         self.watcher_timer.stop()
         self.check_timer.start()
         if check:
