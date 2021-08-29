@@ -62,7 +62,7 @@ def main():
         app.commitDataRequest.connect(tray.prepare_to_exit)
 
     app.setApplicationName("overwatch-omnic-rewards")
-    app.setApplicationVersion("1.1.3")
+    app.setApplicationVersion("1.2")
 
     app.exec_()
 
