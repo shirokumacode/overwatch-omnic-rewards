@@ -29,7 +29,7 @@ A **System Tray** app designed to **help** players **earn Overwatch League token
 
 ## Install
 
-Check the [releases section](https://github.com/shirokumacode/overwatch-omnic-rewards/releases/) for Windows/Linux executables. MacOS builds are experimental for now.
+Check the [releases section](https://github.com/shirokumacode/overwatch-omnic-rewards/releases/) for Windows/Linux/MacOS executables. MacOS builds are experimental for now.
 
 Can't currently test the builds on Windows and MacOS. Windows builds are probably ok at the moment but MacOS users should check out the [How to run](#how-to-run) section to run the app just in case.
 
@@ -83,7 +83,7 @@ You certainly can. Just download the executable and follow the steps below
 
 ## How to Run
 
-Run the executables from the releases section 
+Run the executables from the [releases section](https://github.com/shirokumacode/overwatch-omnic-rewards/releases/)
 
 OR
 
@@ -92,7 +92,7 @@ OR
 ```shell
 pip install pipenv
 ```
-3. Run the app
+3. Run the app under pipenv environment
 ```shell
 pipenv run python app.py
 ```
