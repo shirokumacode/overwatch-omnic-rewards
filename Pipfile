@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 requests = "*"
 lxml = "*"
-pyqt5 = "*"
+pyside6 = "*"
 
 [dev-packages]
 flask = "*"

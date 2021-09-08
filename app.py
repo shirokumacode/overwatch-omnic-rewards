@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
+from PySide6.QtWidgets import *
+from PySide6.QtGui import *
+from PySide6.QtCore import *
 
 import argparse
 import logging
@@ -68,7 +68,7 @@ def main():
     app.setApplicationName(APPLICATION_NAME)
     app.setApplicationVersion(APPLICATION_VERSION)
 
-    app.exec_()
+    app.exec()
 
 def arg_parse():
     parser = argparse.ArgumentParser()
@@ -124,7 +124,6 @@ def configure_logging(options, application_path: str):
         log_handlers.append(file_handler)
 
     logging.basicConfig(handlers=log_handlers, level=level)
-
 
 def get_application_path() -> str:
     # PyInstaller fix for application path

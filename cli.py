@@ -1,6 +1,6 @@
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PySide6.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
 
 import logging
 import sys
@@ -35,12 +35,12 @@ class CLIApp(QObject):
 
         self.check_viewer.run()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def update_check_progress(self, min_remaining=None):
         if min_remaining:
             logger.info(f"Not Live - {min_remaining}min until next check")
 
-    @pyqtSlot(int, str, bool)
+    @Slot(int, str, bool)
     def update_watching_owl(self, min_watching, title, end):
         self.stats.set_record(False, min_watching, title, self.settings.get('account'))
         if not end:
@@ -49,7 +49,7 @@ class CLIApp(QObject):
             self.stats.write_record()
             logger.info(f"Watched {min_watching}mins of OWL - {title}")
 
-    @pyqtSlot(int, str, bool)
+    @Slot(int, str, bool)
     def update_watching_owc(self, min_watching, title, end):
         self.stats.set_record(True, min_watching, title, self.settings.get('account'))
         if not end:
@@ -58,7 +58,7 @@ class CLIApp(QObject):
             self.stats.write_record()
             logger.info(f"Watched {min_watching}mins of OWC - {title}")
 
-    @pyqtSlot(str, bool)
+    @Slot(str, bool)
     def update_error(self, error_msg, notification):
         self.stats.write_record()
         if notification:
@@ -68,7 +68,7 @@ class CLIApp(QObject):
         if not self.check_viewer.check_timer.isActive() and not self.check_viewer.watcher_timer.isActive():
             self.check_viewer.start_check_timer()
 
-    @pyqtSlot()
+    @Slot()
     def prepare_to_exit(self):
         logger.info("Preparing to exit")
         self.stats.write_record()

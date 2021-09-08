@@ -3,7 +3,7 @@
 [![Linux Build](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/linux_build.yml/badge.svg)](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/linux_build.yml) 
 [![MacOS Build](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/macos_build.yml/badge.svg)](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/macos_build.yml) 
 
-A **System Tray** app designed to **help** players **earn Overwatch League tokens** and **Contenders skins**. Cross-platform (Windows/Linux/MacOS). Created using Python and PyQt5. 
+A **System Tray** app designed to **help** players **earn Overwatch League tokens** and **Contenders skins**. Cross-platform (Windows/Linux/MacOS). Created using Python and Qt (PySide6).
 
 ## Features
 - Earn **OWL tokens and OWC skins** in the **background**
@@ -117,7 +117,7 @@ python app.py
 
 (Optional) You can compile your own pyqt resource file. I already provide it for ease of use but you should make sure the code is right.
 ```shell
-pyrcc5 resources.qrc -o resources_qc.py
+pyside6-rcc resources.qrc -o resources_qc.py
 ```
 
 ### Testing the app

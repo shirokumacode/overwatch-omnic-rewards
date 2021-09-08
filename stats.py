@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
+from PySide6.QtWidgets import *
+from PySide6.QtGui import *
+from PySide6.QtCore import *
 
 from datetime import datetime, timedelta
 from dataclasses import dataclass
@@ -22,7 +22,7 @@ class Record:
 
 
 class Stats(QObject):
-    changed = pyqtSignal()
+    changed = Signal()
 
     def __init__(self, location: str):
         super().__init__()

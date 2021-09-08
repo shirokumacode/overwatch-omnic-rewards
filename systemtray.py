@@ -1,6 +1,6 @@
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PySide6.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
 
 import logging
 import os
@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 class SystemTray(QSystemTrayIcon):
-    exit_signal = pyqtSignal(bool)
+    exit_signal = Signal(bool)
 
     def __init__(self, settings: SettingsManager, stats: Stats, quiet_mode=False, parent=None):
         super().__init__(parent)
@@ -130,7 +130,7 @@ class SystemTray(QSystemTrayIcon):
 
         self.thread.start()
 
-    @pyqtSlot(str, bool)
+    @Slot(str, bool)
     def update_error(self, error_msg, notification):
         self.setIcon(self.icon_error)
         self.checknow_action.setEnabled(True)
@@ -142,8 +142,8 @@ class SystemTray(QSystemTrayIcon):
                 f"{error_msg} \n Perform a check now or restart app",
                 self.icon_error, 10000)
 
-    @pyqtSlot()
-    @pyqtSlot(int)
+    @Slot()
+    @Slot(int)
     def update_check_progress(self, min_remaining=None):
         self.setIcon(self.icon_disabled)
         if min_remaining:
@@ -163,7 +163,7 @@ class SystemTray(QSystemTrayIcon):
             logger.info("Checking OWL/OWC page")
             self.status_action.setText("Status: Checking OWL/OWC page")
 
-    @pyqtSlot(int, str, bool)
+    @Slot(int, str, bool)
     def update_watching_owl(self, min_watching, title, end):
         self.setIcon(self.icon_owl)
         self.stats.set_record(False, min_watching, title, self.settings.get('account'))
@@ -186,7 +186,7 @@ class SystemTray(QSystemTrayIcon):
             if self.shutdown_action.isChecked():
                 self.shutdown_flag = True
 
-    @pyqtSlot(int, str, bool)
+    @Slot(int, str, bool)
     def update_watching_owc(self, min_watching, title, end):
         self.setIcon(self.icon_owc)
         self.stats.set_record(True, min_watching, title, self.settings.get('account'))
@@ -210,7 +210,7 @@ class SystemTray(QSystemTrayIcon):
             if self.shutdown_action.isChecked():
                 self.shutdown_flag = True
 
-    @pyqtSlot(bool)
+    @Slot(bool)
     def update_false_tracking(self, contenders):
         self.setIcon(self.icon_error)
         if contenders:
@@ -218,7 +218,7 @@ class SystemTray(QSystemTrayIcon):
         else:
             self.status_action.setText("Status: OWL seems Live, not tracking")
 
-    @pyqtSlot()
+    @Slot()
     def account_setup(self):
         logger.info("Opening account dialog")
         self.account_dialog = AccountDialog(self.icon_owl)
@@ -227,7 +227,7 @@ class SystemTray(QSystemTrayIcon):
         self.account_dialog.raise_()
         self.account_dialog.activateWindow()
 
-    @pyqtSlot()
+    @Slot()
     def save_account(self):
         logger.info("Setting account")
         account_id = self.account_dialog.get_userid()
@@ -245,11 +245,11 @@ class SystemTray(QSystemTrayIcon):
         self.account_action.setText(f"Account: {self.settings.get('account')}")
         self.settings_dialog.refresh_account()
 
-    @pyqtSlot()
+    @Slot()
     def show_stats(self):
         self.stats_dialog.show_dialog(self.settings.get('account'))
 
-    @pyqtSlot()
+    @Slot()
     def show_settings(self):
         logger.info("Opening settings dialog")
         # Debug current widgets (useful for memory leaks
@@ -261,7 +261,7 @@ class SystemTray(QSystemTrayIcon):
         # Make sure settings dialog is not deleted
         # self.settings_dialog.finished.connect(self.settings_dialog.deleteLater)
 
-    @pyqtSlot()
+    @Slot()
     def prepare_to_exit(self):
         logger.info("Preparing to exit")
         self.stats.write_record()

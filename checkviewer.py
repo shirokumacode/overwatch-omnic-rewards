@@ -1,6 +1,6 @@
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
+from PySide6.QtCore import *
+from PySide6.QtWidgets import *
+from PySide6.QtGui import *
 
 import requests
 
@@ -12,13 +12,13 @@ logger = logging.getLogger(__name__)
 
 
 class CheckViewer(QObject):
-    check_progress = pyqtSignal(int)
-    checking = pyqtSignal()
-    watching_owl = pyqtSignal(int, str, bool)
-    watching_owc = pyqtSignal(int, str, bool)
-    error = pyqtSignal(str, bool)
-    false_tracking = pyqtSignal(bool)
-    exit_signal = pyqtSignal()
+    check_progress = Signal(int)
+    checking = Signal()
+    watching_owl = Signal(int, str, bool)
+    watching_owc = Signal(int, str, bool)
+    error = Signal(str, bool)
+    false_tracking = Signal(bool)
+    exit_signal = Signal()
 
     def __init__(self, userid=None, owl_flag=True, owc_flag=True, min_check=10):
         super().__init__()
@@ -41,8 +41,8 @@ class CheckViewer(QObject):
         if self.userid:
             self.start_check_timer()
 
-    @pyqtSlot(bool)
-    @pyqtSlot(int)
+    @Slot(bool)
+    @Slot(int)
     def set_owl_flag(self, checked):
         if checked:
             self.owl_flag = True
@@ -54,8 +54,8 @@ class CheckViewer(QObject):
                 self.watching_owl.emit(self.viewer.time_watched, self.viewer_title, True)
                 self.start_check_timer(check=False)
 
-    @pyqtSlot(bool)
-    @pyqtSlot(int)
+    @Slot(bool)
+    @Slot(int)
     def set_owc_flag(self, checked):
         if checked:
             self.owc_flag = True
@@ -67,17 +67,17 @@ class CheckViewer(QObject):
                 self.watching_owc.emit(self.viewer.time_watched, self.viewer_title, True)
                 self.start_check_timer(check=False)
 
-    @pyqtSlot(str)
+    @Slot(str)
     def set_userid(self, userid):
         logger.info(f"Setting userid - {userid}")
         self.userid = userid
         self.start_check_timer()
 
-    @pyqtSlot(int)
+    @Slot(int)
     def set_min_check(self, min_check):
         self.min_check = min_check
 
-    @pyqtSlot()
+    @Slot()
     def start_check_timer(self, check=True):
         logger.debug("Starting checker timer")
         self.watcher_timer.stop()
@@ -85,7 +85,7 @@ class CheckViewer(QObject):
         if check:
             self.check_if_live()
 
-    @pyqtSlot()
+    @Slot()
     def timeout_check_timer(self):
         if self.check_counter >= self.min_check:
             self.check_counter = 0
@@ -139,7 +139,7 @@ class CheckViewer(QObject):
         self.contenders = contenders
         self.watch()
 
-    @pyqtSlot()
+    @Slot()
     def watch(self):
         logger.info("Sending sentinel packets")
         try:
@@ -194,7 +194,7 @@ class CheckViewer(QObject):
                 self.start_check_timer(check=False)
                 pass
 
-    @pyqtSlot(bool)
+    @Slot(bool)
     def prepare_to_exit(self, exit_signal):
         logger.info("Preparing to exit")
         self.check_timer.stop()
