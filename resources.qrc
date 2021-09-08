@@ -5,5 +5,13 @@
         <file alias="iconowl.png">icons/iconowl.png</file>
         <file alias="iconowc.png">icons/iconowc.png</file>
         <file alias="iconerror.png">icons/iconerror.png</file>
+        <file alias="settings.png">icons/settings_black_48dp.svg</file>
+        <file alias="stats.png">icons/analytics_black_48dp.svg</file>
+        <file alias="shutdown.png">icons/settings_power_black_48dp.svg</file>
+        <file alias="exit.png">icons/close_black_48dp.svg</file>
+        <file alias="home.png">icons/home_black_48dp.svg</file>
+        <file alias="schedule.png">icons/calendar_today_black_48dp.svg</file>
+        <file alias="youtube.png">icons/youtube.png</file>
+        <file alias="refresh.png">icons/sync_black_48dp.svg</file>
     </qresource>
 </RCC>
