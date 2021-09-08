@@ -12,6 +12,7 @@ A **System Tray** app designed to **help** players **earn Overwatch League token
 - Uses the same mechanism as OWL/OWC website (Small colored dot)
 - **Stats** - Show Hours watched/tokens earned (also csv file)
 - Can **Shutdown computer** after stream ended 
+- Open current stream with middle mouse click on icon (customizable left/middle click with set actions)
 
 ![](images/merged.png)
 
@@ -29,9 +30,9 @@ A **System Tray** app designed to **help** players **earn Overwatch League token
 
 ## Install
 
-Check the [releases section](https://github.com/shirokumacode/overwatch-omnic-rewards/releases/) for Windows/Linux/MacOS executables. MacOS builds are experimental for now.
+Check the [releases section](https://github.com/shirokumacode/overwatch-omnic-rewards/releases/) for Windows/Linux/MacOS executables.
 
-Can't currently test the builds on Windows and MacOS. Windows builds are probably ok at the moment but MacOS users should check out the [How to run](#how-to-run) section to run the app just in case.
+Can't be sure that the MacOS executable works (never used/don't have a MacOS). Open an issue if it doesn't, and I'll fix whatever is wrong. Last resort, MacOS users should check out the [How to run](#how-to-run) section to run the app.
 
 ## FAQ
 <details>
@@ -80,6 +81,10 @@ You certainly can. Just download the executable and follow the steps below
     - [KDE](https://userbase.kde.org/System_Settings/Autostart)
     - [Arch](https://wiki.archlinux.org/title/autostarting#On_desktop_environment_startup)
 </details>
+    
+**Any doubts on how it all works** or if you want more specifics, **open a discussion** and I'll try to explain everything with the best of my abilities.
+
+Also if you **want any features/changes**, **open a discussion** and I'll try to implement it if feasable. If you can code you can also PR it
 
 ## How to Run
 
@@ -94,6 +99,7 @@ pip install pipenv
 ```
 3. Run the app under pipenv environment
 ```shell
+pipenv install
 pipenv run python app.py
 ```
 
@@ -155,6 +161,8 @@ pyinstaller app.py -n omnic_rewards_Windows -w -i icons\iconowl.ico --onefile
 ### Code/PR away and feel free to criticize my code. I would really like to **get real advice** as it was my first time using PyQt.
 
 ## Common Problems/Additional Questions
+
+Any bugs/problems that are **not covered** by these questions, please **open an issue** 
 
 <details>
 <summary>The app is displaying errors</summary>

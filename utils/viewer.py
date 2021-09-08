@@ -104,7 +104,7 @@ class Viewer():
             "liveTest": False,
             "locale": "en-us"
             }
-
+        logger.debug(data)
         response = self.session.post(self.url, headers=headers, data=json.dumps(data), timeout=(self.CONNECT_TIMEOUT,self.READ_TIMEOUT))
         return response
 
