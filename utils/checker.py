@@ -28,6 +28,14 @@ def check_page_islive(contenders = False):
     # Check if it's live
     blocks = json_data["props"]["pageProps"]["blocks"]
     video_player = next(filter(lambda b: "videoPlayer" in b, blocks))["videoPlayer"]
+
+    # Check if rewards are enabled (can be optional)
+    try:
+        if video_player["videoLogin"][0]["enableSentinelTracking"] == 'None':
+            return
+    except:
+        pass
+
     if video_player["video"]:
         if video_player["video"]["isLive"]:
             return video_player
