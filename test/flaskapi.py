@@ -20,8 +20,8 @@ api = Flask(__name__)
 
 @api.route('/owlpage', methods=['GET'])
 def get_owlpage():
-    #return_page = live_html
-    return_page = no_rewards_html
+    return_page = live_html
+    #return_page = no_rewards_html
     #return_page = notlive_html
     return return_page
 
