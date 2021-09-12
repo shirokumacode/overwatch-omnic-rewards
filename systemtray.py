@@ -42,6 +42,7 @@ class SystemTray(QSystemTrayIcon):
         self.settings_dialog.owl_input.stateChanged.connect(self.check_viewer.set_owl_flag)
         self.settings_dialog.owc_input.stateChanged.connect(self.check_viewer.set_owc_flag)
         self.settings_dialog.min_check_input.valueChanged.connect(self.check_viewer.set_min_check)
+        self.settings_dialog.force_track.stateChanged.connect(self.check_viewer.set_force_rewards)
 
         self.stats_dialog = StatsDialog(self.stats, self.icon_owl, self.icon_owc)
 

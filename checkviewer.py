@@ -20,7 +20,7 @@ class CheckViewer(QObject):
     false_tracking = pyqtSignal(bool)
     exit_signal = pyqtSignal()
 
-    def __init__(self, userid=None, owl_flag=True, owc_flag=True, min_check=10):
+    def __init__(self, userid=None, owl_flag=True, owc_flag=True, min_check=10, force_rewards=False):
         super().__init__()
         logger.info("Starting checkviewer")
 
@@ -29,6 +29,7 @@ class CheckViewer(QObject):
         self.userid = userid
         self.owl_flag = owl_flag
         self.owc_flag = owc_flag
+        self.force_rewards = force_rewards
 
     def run(self):
         # Create QTimers
@@ -77,6 +78,13 @@ class CheckViewer(QObject):
     def set_min_check(self, min_check):
         self.min_check = min_check
 
+    @pyqtSlot(int)
+    @pyqtSlot(bool)
+    def set_force_rewards(self, checked):
+        self.force_rewards = True if checked else False
+        if self.check_timer.isActive():
+            self.start_check_timer()
+
     @pyqtSlot()
     def start_check_timer(self, check=True):
         logger.debug("Starting checker timer")
@@ -98,10 +106,10 @@ class CheckViewer(QObject):
         logger.info("Checking if live")
         self.checking.emit()
         try:
-            if self.owl_flag and (video_player_owl := checker.check_page_islive(contenders=False)):
+            if self.owl_flag and (video_player_owl := checker.check_page_islive(contenders=False, ignore_rewards=self.force_rewards)):
                 logger.info("OWL is Live")
                 self.start_watching(video_player_owl, False)
-            elif self.owc_flag and (video_player_owc := checker.check_page_islive(contenders=True)):
+            elif self.owc_flag and (video_player_owc := checker.check_page_islive(contenders=True, ignore_rewards=self.force_rewards)):
                 logger.info("OWC is live")
                 self.start_watching(video_player_owc, True)
             else:

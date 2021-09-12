@@ -16,7 +16,7 @@ from cli import CLIApp
 logger = logging.getLogger(__name__)
 
 APPLICATION_NAME = "overwatch-omnic-rewards"
-APPLICATION_VERSION = "1.2"
+APPLICATION_VERSION = "1.2.1"
 
 def main():
     # Arg Parser and Logging

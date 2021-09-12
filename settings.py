@@ -61,9 +61,10 @@ class Settings:
     account: str = ''
     owl: bool = True
     owc: bool = True
-    min_check: int = 10
     middle_click: Optional[str] = Actions.open_owl_owc
     left_click: Optional[str] = Actions.context_menu
+    min_check: int = 10
+    force_track: bool = False
 
     def __post_init__(self):
         possible_actions = Actions.possible_actions()
@@ -169,10 +170,28 @@ class SettingsDialog(QDialog):
 
         # Tab 2
         tab_2_layout = QFormLayout()
+
         self.min_check_input = QSpinBox()
         self.min_check_input.setMinimum(1)
         self.min_check_input.setMaximum(60)
-        tab_2_layout.addRow("Check every (min)", self.min_check_input)
+        check_min_label = QLabel("Check every (min)")
+        check_tooltip = "Interval (min) between checks on whether OWL/OWC is live"
+        check_min_label.setWhatsThis(check_tooltip)
+        check_min_label.setToolTip(check_tooltip)
+        self.min_check_input.setWhatsThis(check_tooltip)
+        self.min_check_input.setToolTip(check_tooltip)
+        tab_2_layout.addRow(check_min_label, self.min_check_input)
+
+        self.force_track = QCheckBox()
+        force_track_label = QLabel("Force tracking on streams")
+        force_track_tooltip = "When a stream is live, the app will try to track time ignoring if rewards are enabled " \
+                              "for the stream"
+        force_track_label.setWhatsThis(force_track_tooltip)
+        force_track_label.setToolTip(force_track_tooltip)
+        self.force_track.setWhatsThis(force_track_tooltip)
+        self.force_track.setToolTip(force_track_tooltip)
+        tab_2_layout.addRow(force_track_label, self.force_track)
+
         self.tab_2.setLayout(tab_2_layout)
 
         btn_box = QDialogButtonBox(QDialogButtonBox.Close)
@@ -196,6 +215,7 @@ class SettingsDialog(QDialog):
         self.owl_input.setChecked(self.settings.get('owl'))
         self.owc_input.setChecked(self.settings.get('owc'))
         self.min_check_input.setValue((self.settings.get('min_check')))
+        self.force_track.setChecked(self.settings.get('force_track'))
         self.left_click_input.setCurrentIndex(self.left_click_input.findData(self.settings.get("left_click")))
         self.middle_click_input.setCurrentIndex(self.middle_click_input.findData(self.settings.get("middle_click")))
 
@@ -210,6 +230,7 @@ class SettingsDialog(QDialog):
         self.owl_input.stateChanged.connect(lambda state: self.settings.set('owl', True if state else False))
         self.owc_input.stateChanged.connect(lambda state: self.settings.set('owc', True if state else False))
         self.min_check_input.valueChanged.connect(lambda value: self.settings.set('min_check', value))
+        self.force_track.stateChanged.connect(lambda state: self.settings.set('force_track', True if state else False))
         self.left_click_input.activated.connect(lambda index: self.settings.set('left_click', self.left_click_input.itemData(index)))
         self.middle_click_input.activated.connect(lambda index: self.settings.set('middle_click', self.middle_click_input.itemData(index)))
 

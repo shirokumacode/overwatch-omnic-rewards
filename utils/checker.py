@@ -10,7 +10,7 @@ OWC_URL = "https://overwatchleague.com/en-us/contenders"
 CONNECT_TIMEOUT = 5 
 READ_TIMEOUT = 10
 
-def check_page_islive(contenders = False):
+def check_page_islive(contenders = False, ignore_rewards=True):
     # Select correct url
     url = OWL_URL
     if contenders:
@@ -31,7 +31,7 @@ def check_page_islive(contenders = False):
 
     # Check if rewards are enabled (can be optional)
     try:
-        if video_player["videoLogin"][0]["enableSentinelTracking"] == 'None':
+        if not ignore_rewards and video_player["videoLogin"][0]["enableSentinelTracking"] == 'None':
             return
     except:
         pass
