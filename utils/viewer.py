@@ -16,13 +16,13 @@ class Viewer():
     READ_TIMEOUT = 10
 
     USER_AGENTS = [
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0',
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 11.3; rv:90.0) Gecko/20100101 Firefox/90.0',
-        'Mozilla/5.0 (X11; Linux i686; rv:90.0) Gecko/20100101 Firefox/90.0',
-        'Mozilla/5.0 (Linux x86_64; rv:90.0) Gecko/20100101 Firefox/90.0',
-        'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:90.0) Gecko/20100101 Firefox/90.0',
-        'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:90.0) Gecko/20100101 Firefox/90.0',
-        'Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:90.0) Gecko/20100101 Firefox/90.0'
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 11.6; rv:92.0) Gecko/20100101 Firefox/92.0',
+        'Mozilla/5.0 (X11; Linux i686; rv:92.0) Gecko/20100101 Firefox/92.0',
+        'Mozilla/5.0 (Linux x86_64; rv:92.0) Gecko/20100101 Firefox/92.0',
+        'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:92.0) Gecko/20100101 Firefox/92.0',
+        'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:92.0) Gecko/20100101 Firefox/92.0',
+        'Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:92.0) Gecko/20100101 Firefox/92.0'
     ]
     
     def __init__(self, accountid, videoid, eventid, contenders=False):
