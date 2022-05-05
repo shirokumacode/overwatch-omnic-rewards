@@ -1,9 +1,14 @@
+## OWL Season 2022
+This app may error out when the new season arrives. I am sure Blizzard will definately change something which will break this app. Depending on the complexity of the change I will patch this Day 1 or at the worst during the week. 
+
 # Overwatch Omnic Rewards
 [![Windows Build](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/windows_build.yml/badge.svg)](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/windows_build.yml)
 [![Linux Build](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/linux_build.yml/badge.svg)](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/linux_build.yml) 
 [![MacOS Build](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/macos_build.yml/badge.svg)](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/macos_build.yml) 
 
 A **System Tray** app designed to **help** players **earn Overwatch League tokens** and **Contenders skins**. Cross-platform (Windows/Linux/MacOS). Created using Python and PyQt5. 
+
+
 
 ## Features
 - Earn **OWL tokens and OWC skins** in the **background**
