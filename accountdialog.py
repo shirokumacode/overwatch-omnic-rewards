@@ -17,14 +17,14 @@ class AccountDialog(QDialog):
         outer_layout = QVBoxLayout()
 
         blizzard_url = "<a href=\"https://www.blizzard.com\">blizzard.com</a>"
-        blizzard_user_url = "<a href=\"https://www.blizzard.com/user\">blizzard.com/user</a>"
+        blizzard_user_url = "<a href=\"https://www.blizzard.com/navbar/authenticate\">blizzard.com/navbar/authenticate</a>"
 
         instructions_text = (
             f"<h3 style=\"text-align:center\">How to get your Blizzard user ID</h3>\n"
             f"<p>1 - <b>Go to</b> {blizzard_url}\n"
             f"<p>2 - <b>Login</b> into your account\n"
             f"<p>3 - <b>While logged in</b>, go to {blizzard_user_url}\n"
-            f"<p>4 - <b>Copy</b> the userId field\n"
+            f"<p>4 - <b>Copy</b> the id field\n"
             f"<p>5 - <b>Paste</b> the number below\n"
         )
 
