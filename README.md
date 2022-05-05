@@ -1,5 +1,7 @@
 ## OWL Season 2022
-This app may error out when the new season arrives. I am sure Blizzard will definately change something which will break this app. Depending on the complexity of the change I will patch this Day 1 or at the worst during the week. 
+Blizzard changed the endpoints for tracking the streams in this new season and added a few minor changes. I have a patch in the works that fixes the issue. Expect a new release in the next hour if all goes well. Meanwhile watch on the overwatchleague.com.
+
+~~This app may error out when the new season arrives. I am sure Blizzard will definately change something which will break this app. Depending on the complexity of the change I will patch this Day 1 or at the worst during the week.~~
 
 # Overwatch Omnic Rewards
 [![Windows Build](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/windows_build.yml/badge.svg)](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/windows_build.yml)
