@@ -1,7 +1,10 @@
 ## OWL Season 2022
-Use app version 1.3 that I just released. 
+Use app version 1.3 that I just released. The app might break when watching encores due to changes made this season by Blizzard. If this happens I will fix it quickly when the encores come. I just need to watch an encore first to replicate the same behaviour when watching on overwatchleague.com in the app.
 
-**IMPORTANT NOTE:** I've noticed that the tracking endpoints have been error'ing randomly on this first day of OWL 2022. This is a Blizzard problem and there is nothing I can do to solve it. It is possibly they are getting hammered by unexpected traffic. If you see your circle disappearing or turning red when watching on overwatchleague.com this is why. The app will tell you Watcher HTTP error 503 with a notification. You can perform a "Check now" until it goes away otherwise the app will wait your check time before trying again (default is 10min, can be changing in the settings)
+Also good news: the tracking endpoints seem stable for the past hour as they were a bit iffy at the start of the stream on day 1.
+
+~~**IMPORTANT NOTE:** I've noticed that the tracking endpoints have been error'ing randomly on this first day of OWL 2022. This is a Blizzard problem and there is nothing I can do to solve it. It is possibly they are getting hammered by unexpected traffic. If you see your circle disappearing or turning red when watching on overwatchleague.com this is why. The app will tell you Watcher HTTP error 503 with a notification. You can perform a "Check now" until it goes away otherwise the app will wait your check time before trying again (default is 10min, can be changing in the settings)~~
+
 
 # Overwatch Omnic Rewards
 [![Windows Build](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/windows_build.yml/badge.svg)](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/windows_build.yml)
