@@ -24,7 +24,7 @@ class AccountDialog(QDialog):
             f"<p>1 - <b>Go to</b> {blizzard_url}\n"
             f"<p>2 - <b>Login</b> into your account\n"
             f"<p>3 - <b>While logged in</b>, go to {blizzard_user_url}\n"
-            f"<p>4 - <b>Copy</b> the userId field\n"
+            f"<p>4 - <b>Copy</b> the id field\n"
             f"<p>5 - <b>Paste</b> the number below\n"
         )
 
