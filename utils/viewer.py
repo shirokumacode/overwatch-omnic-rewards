@@ -9,8 +9,8 @@ logger = logging.getLogger(__name__)
 
 class Viewer():
 
-    TRACKING_OWL = "https://wzavfvwgfk.execute-api.us-east-2.amazonaws.com/production/v2/sentinel-tracking/owl"
-    TRACKING_OWC = "https://wzavfvwgfk.execute-api.us-east-2.amazonaws.com/production/v2/sentinel-tracking/contenders"
+    TRACKING_OWL = "https://pk0yccosw3.execute-api.us-east-2.amazonaws.com/production/v2/sentinel-tracking/owl"
+    TRACKING_OWC = "https://pk0yccosw3.execute-api.us-east-2.amazonaws.com/production/v2/sentinel-tracking/contenders"
 
     CONNECT_TIMEOUT = 5  
     READ_TIMEOUT = 10
@@ -102,10 +102,13 @@ class Viewer():
             "type": "video_player",
             "entryId": self.eventid,
             "liveTest": False,
-            "locale": "en-us"
+            "locale": "en-us",
+            "timestamp": int(time.time()),
+            "contentType": "live",
+            "id_type": "battleNetId"
             }
         logger.debug(data)
-        response = self.session.post(self.url, headers=headers, data=json.dumps(data), timeout=(self.CONNECT_TIMEOUT,self.READ_TIMEOUT))
+        response = self.session.post(self.url, headers=headers, data=json.dumps(data), timeout=(self.CONNECT_TIMEOUT, self.READ_TIMEOUT))
         return response
 
 
