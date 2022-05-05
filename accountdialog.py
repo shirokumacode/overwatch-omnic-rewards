@@ -17,7 +17,7 @@ class AccountDialog(QDialog):
         outer_layout = QVBoxLayout()
 
         blizzard_url = "<a href=\"https://www.blizzard.com\">blizzard.com</a>"
-        blizzard_user_url = "<a href=\"https://www.blizzard.com/user\">blizzard.com/user</a>"
+        blizzard_user_url = "<a href=\"https://www.blizzard.com/navbar/authenticate\">blizzard.com/navbar/authenticate</a>"
 
         instructions_text = (
             f"<h3 style=\"text-align:center\">How to get your Blizzard user ID</h3>\n"
