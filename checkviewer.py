@@ -120,18 +120,15 @@ class CheckViewer(QObject):
         except requests.exceptions.HTTPError as errh:
             logger.error("Checker HTTP error - {errh.response.status_code}")
             self.error.emit(f"Checker HTTP error - {errh.response.status_code}", True)
-            self.check_timer.stop()
         except requests.exceptions.ConnectionError as errc:
             logger.error("Checker ConnectionError")
             self.error.emit("Couldn't connect - Check internet", False)
         except requests.exceptions.RequestException as err:
             logger.error(f"Checker Requests error - {err}")
             self.error.emit("Unknown error (requests). Check Logs", True)
-            self.check_timer.stop()
         except Exception as e:
             logger.error(f"Checker Exception - {e}")
             self.error.emit("OWL/OWC Page incorrectly formatted/error", True)
-            self.check_timer.stop()
 
     def start_watching(self, video_player, contenders=False):
         logger.info("Start Watching")
