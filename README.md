@@ -103,7 +103,7 @@ Run the executables from the [releases section](https://github.com/shirokumacode
 OR
 
 1. Clone the repository 
-2. Install Python (3.9 recommended) and then pipenv
+2. Install Python (3.10 recommended) and then pipenv
 ```shell
 pip install pipenv
 ```
