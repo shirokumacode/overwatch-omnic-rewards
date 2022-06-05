@@ -63,7 +63,7 @@ class Settings:
     owc: bool = True
     middle_click: Optional[str] = Actions.open_owl_owc
     left_click: Optional[str] = Actions.context_menu
-    min_check: int = 10
+    min_check: int = 5
     force_track: bool = False
 
     def __post_init__(self):
