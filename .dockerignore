@@ -1,0 +1,43 @@
+config.json
+history.csv
+
+# Git
+.git
+.gitignore
+.github
+
+# Docker
+.dockerignore
+Dockerfile
+
+# IDE
+.idea
+.vscode
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.py[cod]
+*$py.class
+.pytest_cache/
+..mypy_cache/
+
+# poetry
+.venv
+
+# C extensions
+*.so
+
+# Virtual environment
+.venv
+venv
+.python-version
+
+.DS_Store
+.AppleDouble
+.LSOverride
+._*

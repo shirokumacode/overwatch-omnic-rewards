@@ -113,6 +113,18 @@ pipenv install
 pipenv run python app.py
 ```
 
+### Docker
+
+Build docker image
+```
+docker build -t overwatch-omnic-rewards .
+```
+
+Run the app inside docker container (Put your ID of your account instead of 123456789)
+```bash
+docker run -d -e ACCOUNT_ID=123456789 overwatch-omnic-rewards
+```
+
 ## Developing
 
 This app uses pipenv to manage its requirements. Install the dev requirements if you want to develop and test the app
