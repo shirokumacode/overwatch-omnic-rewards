@@ -1,10 +1,10 @@
 ## OWL Season 2022
-Use app version 1.3 that I just released. The app might break when watching encores due to changes made this season by Blizzard. If this happens I will fix it quickly when the encores come. I just need to watch an encore first to replicate the same behaviour when watching on overwatchleague.com in the app.
+This season has been very problematic for rewards(tokens) due to Blizzard's random errors in their website and tracking endpoints. **This applies whether you use the app or watch on overwatchleague.com**. You may randomly see:
+- the "green circle" disappearing -> the app tells you it watched x minutes and goes back to checking mode
+  - this is due to Blizzard's tracking endpoints responding with "stop tracking" when trying to track time (issue #15). If this happens on overwatchleague.com you need to refresh the page to solve
+- sometimes the whole video panel on overwatchleague.com disappears -> app says "Page incorrectly formatted"
 
-Also good news: the tracking endpoints seem stable for the past hour as they were a bit iffy at the start of the stream on day 1.
-
-~~**IMPORTANT NOTE:** I've noticed that the tracking endpoints have been error'ing randomly on this first day of OWL 2022. This is a Blizzard problem and there is nothing I can do to solve it. It is possibly they are getting hammered by unexpected traffic. If you see your circle disappearing or turning red when watching on overwatchleague.com this is why. The app will tell you Watcher HTTP error 503 with a notification. You can perform a "Check now" until it goes away otherwise the app will wait your check time before trying again (default is 10min, can be changing in the settings)~~
-
+Hope that this gets fixed because at the end of last season there were almost no issues at all.
 
 # Overwatch Omnic Rewards
 [![Windows Build](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/windows_build.yml/badge.svg)](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/windows_build.yml)
@@ -57,7 +57,7 @@ No logins, no passwords. It only needs your Blizzard user_id that you can obtain
 
 <details>
 <summary>Does it work?</summary>
-It does. I've tested the mechanism for the past month. I haven't open the OWL/OWC website so far and earned all the tokens and June OWC skins.
+It does. I've been using it since June 2021 and earned all my contenders skins and tokens this way. 
 
 This mechanism was already found and implemented before (with minor differences). See these repositories:
 - [cyandterry/OWL-Token](https://github.com/cyandterry/OWL-Token)
@@ -94,7 +94,7 @@ You certainly can. Just download the executable and follow the steps below
     
 **Any doubts on how it all works** or if you want more specifics, **open a discussion** and I'll try to explain everything with the best of my abilities.
 
-Also if you **want any features/changes**, **open a discussion** and I'll try to implement it if feasable. If you can code you can also PR it
+Also if you **want any features/changes**, **open a discussion** and I'll try to implement it if feasible. If you can code you can also PR it
 
 ## How to Run
 
@@ -188,9 +188,7 @@ Any bugs/problems that are **not covered** by these questions, please **open an 
 
 <details>
 <summary>The app is displaying errors</summary>
-The app should tell you what the problem is. Make sure your account is set and you are connected to the Internet. 
-
-If you get a notification as well it needs user intervention. Use the check now button/action to see if it clears. 
+The app should tell you what the problem is. Make sure your account is set and you are connected to the Internet. Also open an issue if it persists.
 </details>
 
 <details>
@@ -200,7 +198,8 @@ It is probably the tracking endpoints having a breakdown. When people complain t
 
 <details>
 <summary>"OWC/OWC seems Live, not tracking" - Getting 0min watched warning</summary>
-When the stream ends, the OWL website takes a while to remove the live now panel. The app detects it is "live" but it can't track/"watch". This is most likely the reason. 
+When the stream ends, the OWL website takes a while to remove the live now panel. The app detects it is "live" but it can't track/"watch". This is most likely the reason.
+(2022 season) This is happening randomly when the stream is still live due to Blizzard's endpoints. This is the same as the "green circle" disappearing when watching on overwatchleague.com.
 </details>
 
 <details>
@@ -224,7 +223,7 @@ Open an issue on Github so I can try to fix it
 
 <details>
 <summary>Can I change the time between checks?</summary>
-You can via Settings->Experimental or manually changing the config file (config.json) but you might get 0min watched warnings (at the end of a stream) if it's too low. I feel 10min (default) is a good compromise.
+You can via Settings->Experimental or manually changing the config file (config.json) but you might get 0min watched warnings (at the end of a stream) if it's too low. I feel 5min (default) is a good compromise.
 </details>
 
 <details>
@@ -253,7 +252,7 @@ You can using the CLI mode. The argument -c or --cli makes the system tray not v
 ```shell
 python app.py --cli
 ```
-Also this mode doesn't require any graphical dependencies so you can run it on a server without a display. This mode assumes that you already have a config.json with accountid field (copy one created previously and change it accordingly or create a json file with the accountid field).
+This mode doesn't require any graphical dependencies so you can run it on a server without a display. This mode assumes that you already have a config.json with accountid field (copy one created previously and change it accordingly or create a json file with the accountid field).
 </details>
 
 <details>

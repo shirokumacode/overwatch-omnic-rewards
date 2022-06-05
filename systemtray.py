@@ -140,7 +140,7 @@ class SystemTray(QSystemTrayIcon):
         if notification:
             self.showMessage(
                 "Error - OWL Omnic Rewards",
-                f"{error_msg} \n Perform a check now or restart app",
+                f"{error_msg} \n Perform a check now to see if it clears",
                 self.icon_error, 10000)
 
     @pyqtSlot()
