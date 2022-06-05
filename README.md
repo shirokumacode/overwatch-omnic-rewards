@@ -1,10 +1,10 @@
 ## OWL Season 2022
 This season has been very problematic for rewards(tokens) due to Blizzard's random errors in their website and tracking endpoints. **This applies whether you use the app or watch on overwatchleague.com**. You may randomly see:
-- the "green circle" disappearing -> the app tells you it "Watched x minutes" and goes back to checking mode
-  - this is due to Blizzard's tracking endpoints responding with "stop tracking" when trying to track time (issue #15). If this happens on overwatchleague.com you need to refresh the page to solve
+- the "green circle" disappearing -> the app tells you it "Watched x minutes" and goes back to checking mode or says "OWL seems Live, not tracking"
+  - this is due to Blizzard's tracking endpoints responding with "stop tracking" when trying to track time even though the stream is still live ([issue #15](https://github.com/shirokumacode/overwatch-omnic-rewards/issues/15)). If this happens on overwatchleague.com ~~you need to refresh the page to solve~~ a pause/play again is enough to restart the tracking process, however note that the "green circle" only contacts the tracking endpoints again after 1min has passed
 - sometimes the whole video panel on overwatchleague.com disappears -> app says "Not live" or says "Page incorrectly formatted"
 
-Hope that this gets fixed because at the end of last season there were almost no issues at all.
+Hope this gets fixed because at the end of last season there were almost no issues at all.
 
 # Overwatch Omnic Rewards
 [![Windows Build](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/windows_build.yml/badge.svg)](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/windows_build.yml)
