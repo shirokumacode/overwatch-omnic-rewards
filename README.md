@@ -1,8 +1,8 @@
 ## OWL Season 2022
 This season has been very problematic for rewards(tokens) due to Blizzard's random errors in their website and tracking endpoints. **This applies whether you use the app or watch on overwatchleague.com**. You may randomly see:
-- the "green circle" disappearing -> the app tells you it watched x minutes and goes back to checking mode
+- the "green circle" disappearing -> the app tells you it "Watched x minutes" and goes back to checking mode
   - this is due to Blizzard's tracking endpoints responding with "stop tracking" when trying to track time (issue #15). If this happens on overwatchleague.com you need to refresh the page to solve
-- sometimes the whole video panel on overwatchleague.com disappears -> app says "Page incorrectly formatted"
+- sometimes the whole video panel on overwatchleague.com disappears -> app says "Not live" or says "Page incorrectly formatted"
 
 Hope that this gets fixed because at the end of last season there were almost no issues at all.
 
