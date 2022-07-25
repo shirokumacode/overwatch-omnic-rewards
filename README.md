@@ -1,22 +1,31 @@
-## OWL Season 2022
+## OWL/OWC Season 2022
+
+### OWC
+
+**It seems you can no longer earn Contenders skins by watching on [https://overwatchleague.com/en-us/contenders](https://overwatchleague.com/en-us/contenders) based upon the new rules.** You can check the new rules for 2022 Contenders [here](https://assets.blz-contentstack.com/v3/assets/blt321317473c90505c/blta8bfb2baa0d78b0c/5f7f8110cdb10a0cf7444b9e/OWC_Viewership_Incentive_Promotion_-_Official_Rules_(Final).pdf) where it clearly states Youtube is the only platform you can earn skins on. Sad to see this change.
+
+What is strange is that they didn't remove the banner on the website for the rewards and the mechanism to track watch time. But it seems the mechanism is now broken on the website (the green circle disappears after one minute, missing accountid on the requests). This app fixes this and sends proper requests to track time. Blizzard's tracking endpoints still accept this and send OK as response. However I seem to be unable to unlock the skins. I might disable OWC for the next releases of the app. 
+
+### OWL
+
 This season has been very problematic for rewards(tokens) due to Blizzard's random errors in their website and tracking endpoints. **This applies whether you use the app or watch on overwatchleague.com**. You may randomly see:
 - the "green circle" disappearing -> the app tells you it "Watched x minutes" and goes back to checking mode or says "OWL seems Live, not tracking"
   - this is due to Blizzard's tracking endpoints responding with "stop tracking" when trying to track time even though the stream is still live ([issue #15](https://github.com/shirokumacode/overwatch-omnic-rewards/issues/15)). If this happens on overwatchleague.com ~~you need to refresh the page to solve~~ a pause/play again is enough to restart the tracking process, however note that the "green circle" only contacts the tracking endpoints again after 1min has passed
 - sometimes the whole video panel on overwatchleague.com disappears -> app says "Not live" or says "Page incorrectly formatted"
 
-Hope this gets fixed because at the end of last season there were almost no issues at all.
+Hope all these problems get fixed because at the end of last season (OWL and OWC) there were almost no issues at all.
 
 # Overwatch Omnic Rewards
 [![Windows Build](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/windows_build.yml/badge.svg)](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/windows_build.yml)
 [![Linux Build](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/linux_build.yml/badge.svg)](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/linux_build.yml) 
 [![MacOS Build](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/macos_build.yml/badge.svg)](https://github.com/shirokumacode/overwatch-omnic-rewards/actions/workflows/macos_build.yml) 
 
-A **System Tray** app designed to **help** players **earn Overwatch League tokens** and **Contenders skins**. Cross-platform (Windows/Linux/MacOS). Created using Python and PyQt5. 
+A **System Tray** app designed to **help** players **earn Overwatch League tokens** and **~~Contenders skins~~**[(*)](#owc). Cross-platform (Windows/Linux/MacOS). Created using Python and PyQt5. 
 
 
 
 ## Features
-- Earn **OWL tokens and OWC skins** in the **background**
+- Earn **OWL tokens and ~~OWC skins~~**[(*)](#owc) in the **background**
 - **No Login Required**
 - **Very lightweight**, doesn't inflate Youtube views 
 - Uses the same mechanism as OWL/OWC website (Small colored dot)
