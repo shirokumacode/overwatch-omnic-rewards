@@ -75,7 +75,7 @@ class StatsDialog(QDialog):
         self.stats = stats
         self.stats_account = accountid
         stats_owc = [0, 0, 0]
-        stats_owl = [0, 0, 0]
+        stats_owl = [0, 0, 0, 0]
         self.setWindowTitle("Stats/History")
         self.setWindowIcon(icon_owl)
 
@@ -100,31 +100,35 @@ class StatsDialog(QDialog):
         self.inner_layout.addWidget(QLabel("Last 24h"), 0, 1)
         self.inner_layout.addWidget(QLabel("Last 7d"), 1, 1)
         self.inner_layout.addWidget(QLabel("This month"), 2, 1)
+        self.inner_layout.addWidget(QLabel("All-time"), 3, 1)
         self.inner_layout.addWidget(QLabel(str(stats_owl[0]) + " min"), 0, 2)
         self.inner_layout.addWidget(QLabel(str(stats_owl[1]) + " min"), 1, 2)
         self.inner_layout.addWidget(QLabel(str(stats_owl[2]) + " min"), 2, 2)
+        self.inner_layout.addWidget(QLabel(str(stats_owl[3]) + " min"), 3, 2)
         self.inner_layout.addWidget(QLabel(str(round(stats_owl[0] / 60, 2)) + "h"), 0, 3)
         self.inner_layout.addWidget(QLabel(str(round(stats_owl[1] / 60, 2)) + "h"), 1, 3)
         self.inner_layout.addWidget(QLabel(str(round(stats_owl[2] / 60, 2)) + "h"), 2, 3)
+        self.inner_layout.addWidget(QLabel(str(round(stats_owl[3] / 60, 2)) + "h"), 3, 3)
         self.inner_layout.addWidget(QLabel(str(int(stats_owl[0] / 60) * 5) + " tokens"), 0, 4)
         self.inner_layout.addWidget(QLabel(str(int(stats_owl[1] / 60) * 5) + " tokens"), 1, 4)
         self.inner_layout.addWidget(QLabel(str(int(stats_owl[2] / 60) * 5) + " tokens"), 2, 4)
+        self.inner_layout.addWidget(QLabel(str(int(stats_owl[3] / 60) * 5) + " tokens"), 3, 4)
 
         line = QFrame()
         line.setFrameShape(QFrame.HLine)
         line.setLineWidth(3)
-        self.inner_layout.addWidget(line, 3, 0, 2, 5)
+        self.inner_layout.addWidget(line, 4, 0, 2, 5)
 
-        self.inner_layout.addWidget(label_owc, 5, 0, 3, 1)
-        self.inner_layout.addWidget(QLabel("Last 24h"), 5, 1)
-        self.inner_layout.addWidget(QLabel("Last 7d"), 6, 1)
-        self.inner_layout.addWidget(QLabel("This month"), 7, 1)
-        self.inner_layout.addWidget(QLabel(str(stats_owc[0]) + " min"), 5, 2)
-        self.inner_layout.addWidget(QLabel(str(stats_owc[1]) + " min"), 6, 2)
-        self.inner_layout.addWidget(QLabel(str(stats_owc[2]) + " min"), 7, 2)
-        self.inner_layout.addWidget(QLabel(str(round(stats_owc[0] / 60, 2)) + "h"), 5, 3)
-        self.inner_layout.addWidget(QLabel(str(round(stats_owc[1] / 60, 2)) + "h"), 6, 3)
-        self.inner_layout.addWidget(QLabel(str(round(stats_owc[2] / 60, 2)) + "h"), 7, 3)
+        self.inner_layout.addWidget(label_owc, 6, 0, 3, 1)
+        self.inner_layout.addWidget(QLabel("Last 24h"), 6, 1)
+        self.inner_layout.addWidget(QLabel("Last 7d"), 7, 1)
+        self.inner_layout.addWidget(QLabel("This month"), 8, 1)
+        self.inner_layout.addWidget(QLabel(str(stats_owc[0]) + " min"), 6, 2)
+        self.inner_layout.addWidget(QLabel(str(stats_owc[1]) + " min"), 7, 2)
+        self.inner_layout.addWidget(QLabel(str(stats_owc[2]) + " min"), 8, 2)
+        self.inner_layout.addWidget(QLabel(str(round(stats_owc[0] / 60, 2)) + "h"), 6, 3)
+        self.inner_layout.addWidget(QLabel(str(round(stats_owc[1] / 60, 2)) + "h"), 7, 3)
+        self.inner_layout.addWidget(QLabel(str(round(stats_owc[2] / 60, 2)) + "h"), 8, 3)
 
         outer_layout = QVBoxLayout()
         outer_layout.addLayout(self.inner_layout)
@@ -181,12 +185,13 @@ class StatsDialog(QDialog):
         range_week = datetime.now().astimezone() - timedelta(days=7)
         current_month = datetime.now().astimezone().month
 
-        stats_owl = [0, 0, 0]
+        stats_owl = [0, 0, 0, 0]
         stats_owc = [0, 0, 0]
 
         for row in history_data:
             try:
                 if row['Account'] == accountid:
+                    stats_owl[3] += int(row['Minutes'])
                     if datetime.fromisoformat(row['Timestamp']) > range_day:
                         if row['Type'] == 'owl':
                             stats_owl[0] += int(row['Minutes'])
@@ -215,18 +220,21 @@ class StatsDialog(QDialog):
         self.inner_layout.itemAtPosition(0, 2).widget().setText(str(stats_owl[0]) + " min")
         self.inner_layout.itemAtPosition(1, 2).widget().setText(str(stats_owl[1]) + " min")
         self.inner_layout.itemAtPosition(2, 2).widget().setText(str(stats_owl[2]) + " min")
+        self.inner_layout.itemAtPosition(3, 2).widget().setText(str(stats_owl[3]) + " min")
         self.inner_layout.itemAtPosition(0, 3).widget().setText(str(round(stats_owl[0] / 60, 2)) + "h")
         self.inner_layout.itemAtPosition(1, 3).widget().setText(str(round(stats_owl[1] / 60, 2)) + "h")
         self.inner_layout.itemAtPosition(2, 3).widget().setText(str(round(stats_owl[2] / 60, 2)) + "h")
+        self.inner_layout.itemAtPosition(3, 3).widget().setText(str(round(stats_owl[3] / 60, 2)) + "h")
         self.inner_layout.itemAtPosition(0, 4).widget().setText(str(int(stats_owl[0] / 60) * 5) + " tokens")
         self.inner_layout.itemAtPosition(1, 4).widget().setText(str(int(stats_owl[1] / 60) * 5) + " tokens")
         self.inner_layout.itemAtPosition(2, 4).widget().setText(str(int(stats_owl[2] / 60) * 5) + " tokens")
-        self.inner_layout.itemAtPosition(5, 2).widget().setText(str(stats_owc[0]) + " min")
-        self.inner_layout.itemAtPosition(6, 2).widget().setText(str(stats_owc[1]) + " min")
-        self.inner_layout.itemAtPosition(7, 2).widget().setText(str(stats_owc[2]) + " min")
-        self.inner_layout.itemAtPosition(5, 3).widget().setText(str(round(stats_owc[0] / 60, 2)) + "h")
-        self.inner_layout.itemAtPosition(6, 3).widget().setText(str(round(stats_owc[1] / 60, 2)) + "h")
-        self.inner_layout.itemAtPosition(7, 3).widget().setText(str(round(stats_owc[2] / 60, 2)) + "h")
+        self.inner_layout.itemAtPosition(3, 4).widget().setText(str(int(stats_owl[3] / 60) * 5) + " tokens")
+        self.inner_layout.itemAtPosition(6, 2).widget().setText(str(stats_owc[0]) + " min")
+        self.inner_layout.itemAtPosition(7, 2).widget().setText(str(stats_owc[1]) + " min")
+        self.inner_layout.itemAtPosition(8, 2).widget().setText(str(stats_owc[2]) + " min")
+        self.inner_layout.itemAtPosition(6, 3).widget().setText(str(round(stats_owc[0] / 60, 2)) + "h")
+        self.inner_layout.itemAtPosition(7, 3).widget().setText(str(round(stats_owc[1] / 60, 2)) + "h")
+        self.inner_layout.itemAtPosition(8, 3).widget().setText(str(round(stats_owc[2] / 60, 2)) + "h")
 
 if __name__ == "__main__":
     global stats
