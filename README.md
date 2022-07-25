@@ -4,7 +4,7 @@
 
 **It seems you can no longer earn Contenders skins by watching on [https://overwatchleague.com/en-us/contenders](https://overwatchleague.com/en-us/contenders) based upon the new rules.** You can check the new rules for 2022 Contenders [here](https://assets.blz-contentstack.com/v3/assets/blt321317473c90505c/blta6154001578bb2c6/62cf20652fdd1011027e5e83/2022ContendersViewIncentivesLEGALFINAL.pdf) where it clearly states Youtube is the only platform you can earn skins on. Sad to see this change.
 
-What is strange is that they didn't remove the banner on the website for the rewards and the mechanism to track watch time. But it seems the mechanism is now broken on the website (the green circle disappears after one minute, missing accountid on the requests). This app fixes this and sends proper requests to track time. Blizzard's tracking endpoints still accept this and send OK as response. However I seem to be unable to unlock the skins. I might disable OWC for the next releases of the app. 
+What is strange is that they didn't remove the banner on the website for the rewards and the mechanism to track watch time.  Blizzard's tracking endpoints still accept requests to track time and send OK as response. However I seem to be unable to unlock the skins. I might disable OWC for the next releases of the app. 
 
 ### OWL
 
